@@ -24,7 +24,7 @@ class ChessBoard:
 
         self.chess_pieces = fen_to_board(fen_notation)
 
-    def change_sides(self):
+    def flip_board(self):
         for piece in self.chess_pieces:
             piece.rect.x = abs(piece.rect.x - 7*100)
             piece.rect.y = abs(piece.rect.y - 7*100)
