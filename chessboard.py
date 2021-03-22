@@ -17,6 +17,10 @@ class ChessBoard:
         starting_fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR'
         self.chess_pieces = fen_to_board(starting_fen)
 
+    def reset_pieces(self):
+        starting_fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR'
+        self.chess_pieces = fen_to_board(starting_fen)
+
     def load_fen(self, fen_notation):
         """ Adds pieces objects to pieces list
 
