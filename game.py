@@ -11,6 +11,8 @@ class ChessGame():
         pygame.init()
         self.screen = pygame.display.set_mode((800, 800))
         pygame.display.set_caption("Python Chess - Igor Jakus")
+        window_logo = pygame.image.load("assets/king_white.png")
+        pygame.display.set_icon(window_logo)
 
         # Setting up chessboard
         self.board = chessboard.ChessBoard()
@@ -58,9 +60,13 @@ class ChessGame():
                     self.selected_piece = piece
 
     def _blit_board(self):
-        for square in self.board.chess_board:
-            pygame.draw.rect(self.screen, square.color(),
-                             ((*square.position()), 100, 100))
+        for i in range(8):
+            for j in range(8):
+                if (i + j) % 2 == 1:
+                    color = (125, 135, 150)  # cool gray
+                else:
+                    color = (232, 235, 239)  # nice white
+                pygame.draw.rect(self.screen, color, (i*100, j*100, 100, 100))
 
     def _blit_pieces(self):
         for piece in self.board.chess_pieces:
