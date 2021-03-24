@@ -18,7 +18,7 @@ class ChessGame():
         self.board = chessboard.ChessBoard()
 
         # Setting up functionality
-        self.selected_piece = False
+        self.selected_piece = None
 
     def run_game(self):
         while True:
@@ -48,14 +48,23 @@ class ChessGame():
         mouseY = (mouseY // 100) * 100
 
         if self.selected_piece:
-            # move piece to selected square
-            self.selected_piece.rect.topleft = (mouseX, mouseY)
+            for piece in self.board.pieces:
+                if piece.rect.topleft == (mouseX, mouseY):
+                    if self.selected_piece.is_black != piece.is_black:
+                        # take piece and move to selected square
+                        self.board.pieces.remove(piece)
+                        self.selected_piece.rect.topleft = (mouseX, mouseY)
+                    else:
+                        break
+            else:
+                # move piece to selected square
+                self.selected_piece.rect.topleft = (mouseX, mouseY)
 
             # cancel select
-            self.selected_piece = False
+            self.selected_piece = None
 
         else:
-            for piece in self.board.chess_pieces:
+            for piece in self.board.pieces:
                 if (mouseX, mouseY) == piece.rect.topleft:
                     self.selected_piece = piece
 
@@ -69,7 +78,7 @@ class ChessGame():
                 pygame.draw.rect(self.screen, color, (i*100, j*100, 100, 100))
 
     def _blit_pieces(self):
-        for piece in self.board.chess_pieces:
+        for piece in self.board.pieces:
             self.screen.blit(piece.img, piece.rect)
 
     def _update_screen(self):
