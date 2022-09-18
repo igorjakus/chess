@@ -1,27 +1,24 @@
 from fen import fen_to_board
 
 
-class ChessBoard:
-    """ Manage chessboard """
+class ChessBoard(list):
+    """This class is an extended type of list that is initialized
+    with starting chess position
+
+    You also can reset it to starting position or load another position
+    using a FEN notation"""
+
     def __init__(self):
-        self._setup_pieces()
+        super().__init__()
+        self._place_pieces()
 
-    def _setup_pieces(self):
+    def _place_pieces(self):
         starting_fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR'
-        self.pieces = fen_to_board(starting_fen)
+        fen_to_board(self, starting_fen)
 
-    def reset_pieces(self):
+    def reset(self):
         starting_fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR'
-        self.pieces = fen_to_board(starting_fen)
+        fen_to_board(self, starting_fen)
 
     def load_fen(self, fen_notation):
-        """ Adds pieces objects to pieces list
-
-        Arg: notation ([str]): FEN stored in single line string """
-
-        self.pieces = fen_to_board(fen_notation)
-
-    def flip_board(self):
-        for piece in self.pieces:
-            piece.rect.x = abs(piece.rect.x - 7*100)
-            piece.rect.y = abs(piece.rect.y - 7*100)
+        fen_to_board(self, fen_notation)
