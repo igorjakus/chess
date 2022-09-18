@@ -1,0 +1,5 @@
+drag and drop
+check
+promoting
+board to fen
+castling
