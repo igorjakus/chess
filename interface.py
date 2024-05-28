@@ -15,6 +15,9 @@ class UserInterface:
     RED = (255, 102, 102)
     DARK_RED = (136, 8, 8)
 
+    FONT = SCREEN_SIZE[0] // 10
+    SMALL_FONT = SCREEN_SIZE[0] // 20
+
     def __init__(self, board: chess.Board):
         self.resources = ResourceManager(self.SQUARE)
 
@@ -29,9 +32,8 @@ class UserInterface:
         self.legal_moves = []
         self.game_over = False
 
-        big_size = self.SCREEN_SIZE[0] // 10
-        self.big_font = pygame.font.SysFont(None, big_size)
-
+        self.font = pygame.font.SysFont(None, self.FONT)
+        self.small_font = pygame.font.SysFont(None, self.SMALL_FONT)
 
     def reset(self):
         self.board.reset()
@@ -62,8 +64,6 @@ class UserInterface:
             self.reset()
         elif event.key == pygame.K_p:
             self.random_move()
-        elif event.key == pygame.K_k and self.game_over:
-            self.reset()
 
     def _handle_mouse_click(self):
         mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -86,18 +86,26 @@ class UserInterface:
             move = chess.Move(self.selected_piece, square)
 
             if self.is_promotion(move):
-                move.promotion = self._handle_promotion()
+                move.promotion = chess.QUEEN  # Default promotion to queen
 
             if move in self.board.legal_moves:
                 self.board.push(move)
                 self.selected_piece = None
                 self.legal_moves = []
                 self._check_game_over()
-    
-    def _handle_promotion(self):
-        """ trzeba to rozwinąć! """
-        return chess.QUEEN
-    
+
+    def is_promotion(self, move):
+        # Check if the move is a pawn move to the back rank
+        if self.board.piece_at(move.from_square).piece_type == chess.PAWN:
+            if chess.square_rank(move.to_square) == 0 or chess.square_rank(move.to_square) == 7:
+                return True
+        return False
+
+    def _check_game_over(self):
+        if self.board.is_game_over():
+            self.game_over = True
+            print(self.board.result())
+
     def random_move(self):
         moves = list(self.board.legal_moves)
         if moves:
@@ -159,20 +167,14 @@ class UserInterface:
             pygame.draw.rect(self.screen, self.DARK_RED, rect)
 
     def _draw_game_over(self):
-        text = self.big_font.render(self.gameover_text, True, self.DARK_RED)
+        text = self.font.render(f"GAME OVER {self.board.result()}", True, self.DARK_RED)
         text_rect = text.get_rect(center=(self.SCREEN_SIZE[0] // 2, self.SCREEN_SIZE[1] // 2))
         self.screen.blit(text, text_rect)
+    
+        small_text = self.small_font.render("Press r to start new game", True, self.DARK_RED)
+        small_text_rect = small_text.get_rect(center=(self.SCREEN_SIZE[0] // 2, self.SCREEN_SIZE[1] // 2 + self.SCREEN_SIZE[1] // 15))
+        self.screen.blit(small_text, small_text_rect)
 
-    def _check_game_over(self):
-        if self.board.is_checkmate():
-            self.game_over = True
-            if self.board.turn == chess.WHITE:
-                self.gameover_text = "GAME OVER (0-1)"
-            else:
-                self.gameover_text = "GAME OVER (1-0)"
-        elif self.board.is_stalemate() or self.board.is_insufficient_material() or self.board.is_seventyfive_moves() or self.board.is_fivefold_repetition():
-            self.game_over = True
-            self.gameover_text = "GAME OVER (1/2 - 1/2)"
 
     def _get_square_under_mouse(self, mouse_x, mouse_y):
         # ekran zaczyna sie od lewego gornego rogu
@@ -194,11 +196,4 @@ class UserInterface:
         x = col * self.SQUARE
         y = (7 - row) * self.SQUARE
         return x, y
-
-    def is_promotion(self, move):
-        # Check if the move is a pawn move to the back rank
-        if self.board.piece_at(move.from_square).piece_type == chess.PAWN:
-            if chess.square_rank(move.to_square) == 0 or chess.square_rank(move.to_square) == 7:
-                return True
-        return False
     
