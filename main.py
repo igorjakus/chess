@@ -12,8 +12,7 @@ class App:
         """Run the main application loop."""
         self.ui.update_screen()
         while True:
-            if self.ui.handle_events():
-                self.ui.update_screen()
+            self.ui.handle_events()
 
 
 if __name__ == "__main__":

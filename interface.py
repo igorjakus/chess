@@ -29,15 +29,15 @@ class UserInterface:
         self.legal_moves = []
 
     def handle_events(self):
-        update_needed = False
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self._quit_game()
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                update_needed |= self._handle_mouse_click()
+                self._handle_mouse_click()
+                self.update_screen()
             elif event.type == pygame.KEYDOWN:
-                update_needed |= self._handle_keydown(event)
-        return update_needed
+                self._handle_keydown(event)
+                self.update_screen()
 
     def _quit_game(self):
         pygame.quit()
@@ -46,26 +46,18 @@ class UserInterface:
     def _handle_keydown(self, event):
         if event.key == pygame.K_SPACE:
             self.flipped_view = not self.flipped_view
-            return True
         elif event.key == pygame.K_r:
             self.reset()
-            return True
         elif event.key == pygame.K_p:
             self.random_move()
-            return True
-        return False
 
     def _handle_mouse_click(self):
-        
         mouse_x, mouse_y = pygame.mouse.get_pos()
-        print(mouse_x, mouse_y)
         selected_square = self._get_square_under_mouse(mouse_x, mouse_y)
-        print(selected_square)
         if self.selected_piece is None:
             self._select_piece(selected_square)
         else:
             self._move_or_deselect_piece(selected_square)
-        return True
 
     def _select_piece(self, square):
         if self.board.color_at(square) is self.board.turn:
