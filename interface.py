@@ -16,10 +16,10 @@ class UserInterface:
     DARK_RED = (136, 8, 8)
 
     def __init__(self, board: chess.Board):
-        self.resources = ResourceManager(UserInterface.SQUARE)
+        self.resources = ResourceManager(self.SQUARE)
 
         pygame.init()
-        self.screen = pygame.display.set_mode(UserInterface.SCREEN_SIZE)
+        self.screen = pygame.display.set_mode(self.SCREEN_SIZE)
         pygame.display.set_caption("Python Chess - Igor Jakus")
         pygame.display.set_icon(self.resources.logo)
         
@@ -117,27 +117,6 @@ class UserInterface:
                 rect = pygame.Rect(pos_x, pos_y, self.SQUARE, self.SQUARE)
                 self.screen.blit(piece_image, rect)
 
-    def _get_square_under_mouse(self, mouse_x, mouse_y):
-        # ekran zaczyna sie od lewego gornego rogu
-        selected_row = 7 - mouse_y // self.SQUARE
-        selected_col = mouse_x // self.SQUARE
-
-        if self.flipped_view:
-            selected_row = 7 - selected_row
-            selected_col = 7 - selected_col
-
-        return chess.square(selected_col, selected_row)
-
-    def _square_to_position(self, square):
-        """Square to pos_x, pos_y"""
-        row, col = divmod(square, 8)
-        if self.flipped_view:
-            col, row = 7 - col, 7 - row
-
-        x = col * self.SQUARE
-        y = (7 - row) * self.SQUARE
-        return x, y
-
     def _draw_effects(self):
         self._highlight_moves()
         self._highlight_selected()
@@ -168,6 +147,31 @@ class UserInterface:
             rect = (x, y, self.SQUARE, self.SQUARE)
             pygame.draw.rect(self.screen, self.DARK_RED, rect)
 
-    @staticmethod
-    def is_promotion(move):
-        return chess.Move.from_uci(str(move)).promotion is not None
+    def _get_square_under_mouse(self, mouse_x, mouse_y):
+        # ekran zaczyna sie od lewego gornego rogu
+        selected_row = 7 - mouse_y // self.SQUARE
+        selected_col = mouse_x // self.SQUARE
+
+        if self.flipped_view:
+            selected_row = 7 - selected_row
+            selected_col = 7 - selected_col
+
+        return chess.square(selected_col, selected_row)
+
+    def _square_to_position(self, square):
+        """Square to pos_x, pos_y"""
+        row, col = divmod(square, 8)
+        if self.flipped_view:
+            col, row = 7 - col, 7 - row
+
+        x = col * self.SQUARE
+        y = (7 - row) * self.SQUARE
+        return x, y
+
+    def is_promotion(self, move):
+        # Check if the move is a pawn move to the back rank
+        if self.board.piece_at(move.from_square).piece_type == chess.PAWN:
+            if chess.square_rank(move.to_square) == 0 or chess.square_rank(move.to_square) == 7:
+                return True
+        return False
+    
