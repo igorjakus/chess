@@ -4,13 +4,10 @@ import interface as interface
 
 class App:
     def __init__(self):
-        """Initialize the chess application."""
         self.board = chess.Board()
         self.ui = interface.UserInterface(self.board)
 
-    def run(self):
-        """Run the main application loop."""
-        self.ui.update_screen()
+    def run(self):    
         while True:
             self.ui.handle_events()
 

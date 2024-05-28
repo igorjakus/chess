@@ -2,38 +2,29 @@ from sys import exit
 import pygame
 import chess
 import random
+
+from config import Config
 from resource_manager import ResourceManager
 
 
 class UserInterface:
-    SQUARE = 80
-    SCREEN_SIZE = (8 * SQUARE, 8 * SQUARE)
-
-    WHITE = (232, 235, 239)
-    BLACK = (125, 135, 150)
-    LIGHT_BLUE = (111, 159, 191)
-    RED = (255, 102, 102)
-    DARK_RED = (136, 8, 8)
-
-    FONT = SCREEN_SIZE[0] // 10
-    SMALL_FONT = SCREEN_SIZE[0] // 20
-
     def __init__(self, board: chess.Board):
-        self.resources = ResourceManager(self.SQUARE)
+        self.resources = ResourceManager(Config.SQUARE)
 
         pygame.init()
-        self.screen = pygame.display.set_mode(self.SCREEN_SIZE)
+        self.screen = pygame.display.set_mode(Config.SCREEN_SIZE)
         pygame.display.set_caption("Python Chess - Igor Jakus")
         pygame.display.set_icon(self.resources.logo)
-        
+
+        self.font = pygame.font.SysFont(None, Config.FONT)
+        self.small_font = pygame.font.SysFont(None, Config.SMALL_FONT)
+
         self.board = board
         self.selected_piece = None
         self.flipped_view = False
         self.legal_moves = []
         self.game_over = False
-
-        self.font = pygame.font.SysFont(None, self.FONT)
-        self.small_font = pygame.font.SysFont(None, self.SMALL_FONT)
+        self.update_screen()
 
     def reset(self):
         self.board.reset()
@@ -70,49 +61,44 @@ class UserInterface:
         selected_square = self._get_square_under_mouse(mouse_x, mouse_y)
         if self.selected_piece is None:
             self._select_piece(selected_square)
+        elif selected_square == self.selected_piece:
+            self._deselect_piece()
         else:
-            self._move_or_deselect_piece(selected_square)
+            self._move_piece(selected_square)
 
     def _select_piece(self, square):
         if self.board.color_at(square) is self.board.turn:
             self.selected_piece = square
             self.legal_moves = [move for move in self.board.legal_moves if move.from_square == square]
 
-    def _move_or_deselect_piece(self, square):
-        if square == self.selected_piece:  # deselect
+    def _move_piece(self, square):
+        move = chess.Move(self.selected_piece, square)
+        if self._is_promotion(move):
+            move.promotion = chess.QUEEN
+
+        if move in self.board.legal_moves:
+            self.board.push(move)
             self.selected_piece = None
             self.legal_moves = []
-        else:  # move piece
-            move = chess.Move(self.selected_piece, square)
 
-            if self.is_promotion(move):
-                move.promotion = chess.QUEEN  # Default promotion to queen
+            if self.board.is_game_over():
+                self.game_over = True
 
-            if move in self.board.legal_moves:
-                self.board.push(move)
-                self.selected_piece = None
-                self.legal_moves = []
-                self._check_game_over()
+    def _deselect_piece(self):
+        self.selected_piece = None
+        self.legal_moves = []
 
-    def is_promotion(self, move):
-        # Check if the move is a pawn move to the back rank
-        if self.board.piece_at(move.from_square).piece_type == chess.PAWN:
-            if chess.square_rank(move.to_square) == 0 or chess.square_rank(move.to_square) == 7:
-                return True
-        return False
-
-    def _check_game_over(self):
-        if self.board.is_game_over():
-            self.game_over = True
-            print(self.board.result())
+    def _is_promotion(self, move):
+        piece = self.board.piece_at(move.from_square)
+        return piece and piece.piece_type == chess.PAWN and chess.square_rank(move.to_square) in {0, 7}
 
     def random_move(self):
+        self._deselect_piece()
         moves = list(self.board.legal_moves)
         if moves:
             self.board.push(random.choice(moves))
 
     def update_screen(self):
-        """Update the screen with the current state of the board."""
         self._draw_board()
         self._draw_effects()
         self._draw_pieces()
@@ -123,8 +109,8 @@ class UserInterface:
     def _draw_board(self):
         for i in range(8):
             for j in range(8):
-                color = self.BLACK if (i + j) % 2 else self.WHITE
-                rect = (i * self.SQUARE, j * self.SQUARE, self.SQUARE, self.SQUARE)
+                color = Config.BLACK if (i + j) % 2 else Config.WHITE
+                rect = (i * Config.SQUARE, j * Config.SQUARE, Config.SQUARE, Config.SQUARE)
                 pygame.draw.rect(self.screen, color, rect)
 
     def _draw_pieces(self):
@@ -133,7 +119,7 @@ class UserInterface:
             if piece:
                 piece_image = self.resources.piece_images[piece.symbol()]
                 pos_x, pos_y = self._square_to_position(square)
-                rect = pygame.Rect(pos_x, pos_y, self.SQUARE, self.SQUARE)
+                rect = pygame.Rect(pos_x, pos_y, Config.SQUARE, Config.SQUARE)
                 self.screen.blit(piece_image, rect)
 
     def _draw_effects(self):
@@ -143,43 +129,39 @@ class UserInterface:
 
     def _highlight_moves(self):
         for move in self.legal_moves:
-            square = move.to_square
-            x, y = self._square_to_position(square)
-
-            if self.board.is_capture(move): 
-                rect = (x, y, self.SQUARE, self.SQUARE)
-                pygame.draw.rect(self.screen, self.RED, rect)
+            x, y = self._square_to_position(move.to_square)
+            if self.board.is_capture(move):
+                rect = (x, y, Config.SQUARE, Config.SQUARE)
+                pygame.draw.rect(self.screen, Config.RED, rect)
             else:
-                center = (x + self.SQUARE // 2, y + self.SQUARE // 2)
-                pygame.draw.circle(self.screen, self.LIGHT_BLUE, center, self.SQUARE // 7)
+                center = (x + Config.SQUARE // 2, y + Config.SQUARE // 2)
+                pygame.draw.circle(self.screen, Config.LIGHT_BLUE, center, Config.SQUARE // 7)
 
     def _highlight_selected(self):
-         if self.selected_piece is not None:
+        if self.selected_piece is not None:
             x, y = self._square_to_position(self.selected_piece)
-            rect = (x, y, self.SQUARE, self.SQUARE)
-            pygame.draw.rect(self.screen, self.LIGHT_BLUE, rect)
+            rect = (x, y, Config.SQUARE, Config.SQUARE)
+            pygame.draw.rect(self.screen, Config.LIGHT_BLUE, rect)
 
     def _highlight_check(self):
         if self.board.is_check():
             king_square = self.board.king(self.board.turn)
             x, y = self._square_to_position(king_square)
-            rect = (x, y, self.SQUARE, self.SQUARE)
-            pygame.draw.rect(self.screen, self.DARK_RED, rect)
+            rect = (x, y, Config.SQUARE, Config.SQUARE)
+            pygame.draw.rect(self.screen, Config.DARK_RED, rect)
 
     def _draw_game_over(self):
-        text = self.font.render(f"GAME OVER {self.board.result()}", True, self.DARK_RED)
-        text_rect = text.get_rect(center=(self.SCREEN_SIZE[0] // 2, self.SCREEN_SIZE[1] // 2))
+        text = self.font.render(f"GAME OVER {self.board.result()}", True, Config.DARK_RED)
+        text_rect = text.get_rect(center=(Config.SCREEN_SIZE[0] // 2, Config.SCREEN_SIZE[1] // 2))
         self.screen.blit(text, text_rect)
-    
-        small_text = self.small_font.render("Press r to start new game", True, self.DARK_RED)
-        small_text_rect = small_text.get_rect(center=(self.SCREEN_SIZE[0] // 2, self.SCREEN_SIZE[1] // 2 + self.SCREEN_SIZE[1] // 15))
+
+        small_text = self.small_font.render("Press r to start new game", True, Config.DARK_RED)
+        small_text_rect = small_text.get_rect(center=(Config.SCREEN_SIZE[0] // 2, Config.SCREEN_SIZE[1] // 2 + Config.SCREEN_SIZE[1] // 15))
         self.screen.blit(small_text, small_text_rect)
 
-
     def _get_square_under_mouse(self, mouse_x, mouse_y):
-        # ekran zaczyna sie od lewego gornego rogu
-        selected_row = 7 - mouse_y // self.SQUARE
-        selected_col = mouse_x // self.SQUARE
+        selected_row = 7 - mouse_y // Config.SQUARE
+        selected_col = mouse_x // Config.SQUARE
 
         if self.flipped_view:
             selected_row = 7 - selected_row
@@ -188,12 +170,10 @@ class UserInterface:
         return chess.square(selected_col, selected_row)
 
     def _square_to_position(self, square):
-        """Square to pos_x, pos_y"""
         row, col = divmod(square, 8)
         if self.flipped_view:
             col, row = 7 - col, 7 - row
 
-        x = col * self.SQUARE
-        y = (7 - row) * self.SQUARE
+        x = col * Config.SQUARE
+        y = (7 - row) * Config.SQUARE
         return x, y
-    
