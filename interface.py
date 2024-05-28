@@ -27,12 +27,18 @@ class UserInterface:
         self.selected_piece = None
         self.flipped_view = False
         self.legal_moves = []
+        self.game_over = False
+
+        big_size = self.SCREEN_SIZE[0] // 10
+        self.big_font = pygame.font.SysFont(None, big_size)
+
 
     def reset(self):
         self.board.reset()
         self.selected_piece = None
         self.flipped_view = False
         self.legal_moves = []
+        self.game_over = False
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -56,6 +62,8 @@ class UserInterface:
             self.reset()
         elif event.key == pygame.K_p:
             self.random_move()
+        elif event.key == pygame.K_k and self.game_over:
+            self.reset()
 
     def _handle_mouse_click(self):
         mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -84,6 +92,7 @@ class UserInterface:
                 self.board.push(move)
                 self.selected_piece = None
                 self.legal_moves = []
+                self._check_game_over()
     
     def _handle_promotion(self):
         """ trzeba to rozwinąć! """
@@ -99,6 +108,8 @@ class UserInterface:
         self._draw_board()
         self._draw_effects()
         self._draw_pieces()
+        if self.game_over:
+            self._draw_game_over()
         pygame.display.flip()
 
     def _draw_board(self):
@@ -146,6 +157,22 @@ class UserInterface:
             x, y = self._square_to_position(king_square)
             rect = (x, y, self.SQUARE, self.SQUARE)
             pygame.draw.rect(self.screen, self.DARK_RED, rect)
+
+    def _draw_game_over(self):
+        text = self.big_font.render(self.gameover_text, True, self.DARK_RED)
+        text_rect = text.get_rect(center=(self.SCREEN_SIZE[0] // 2, self.SCREEN_SIZE[1] // 2))
+        self.screen.blit(text, text_rect)
+
+    def _check_game_over(self):
+        if self.board.is_checkmate():
+            self.game_over = True
+            if self.board.turn == chess.WHITE:
+                self.gameover_text = "GAME OVER (0-1)"
+            else:
+                self.gameover_text = "GAME OVER (1-0)"
+        elif self.board.is_stalemate() or self.board.is_insufficient_material() or self.board.is_seventyfive_moves() or self.board.is_fivefold_repetition():
+            self.game_over = True
+            self.gameover_text = "GAME OVER (1/2 - 1/2)"
 
     def _get_square_under_mouse(self, mouse_x, mouse_y):
         # ekran zaczyna sie od lewego gornego rogu
