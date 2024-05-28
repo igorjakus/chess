@@ -56,6 +56,23 @@ class UserInterface:
         elif event.key == pygame.K_p:
             self.random_move()
 
+    def _select_piece(self, square):
+        if self.board.color_at(square) is self.board.turn:
+            self.selected_piece = square
+            self.legal_moves = [move for move in self.board.legal_moves if move.from_square == square]
+    
+    def player_move(self):
+        move_made = False
+        while not move_made:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self._quit_game()
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    move_made = self._handle_mouse_click()
+                elif event.type == pygame.KEYDOWN:
+                    self._handle_keydown(event)
+                self.update_screen()
+
     def _handle_mouse_click(self):
         mouse_x, mouse_y = pygame.mouse.get_pos()
         selected_square = self._get_square_under_mouse(mouse_x, mouse_y)
@@ -64,12 +81,9 @@ class UserInterface:
         elif selected_square == self.selected_piece:
             self._deselect_piece()
         else:
-            self._move_piece(selected_square)
-
-    def _select_piece(self, square):
-        if self.board.color_at(square) is self.board.turn:
-            self.selected_piece = square
-            self.legal_moves = [move for move in self.board.legal_moves if move.from_square == square]
+            if self._move_piece(selected_square):
+                return True  # Zwróć True, jeśli ruch został wykonany
+        return False  # Zwróć False, jeśli ruch nie został wykonany
 
     def _move_piece(self, square):
         move = chess.Move(self.selected_piece, square)
@@ -83,6 +97,8 @@ class UserInterface:
 
             if self.board.is_game_over():
                 self.game_over = True
+            return True  # Ruch został wykonany
+        return False  # Ruch nie został wykonany
 
     def _deselect_piece(self):
         self.selected_piece = None
