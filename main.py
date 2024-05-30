@@ -3,6 +3,7 @@ import interface
 from random import randint
 
 from engines.random_engine import RandomEngine
+from engines.mcts import MCTS
 
 
 class App:
@@ -10,6 +11,7 @@ class App:
         self.board = chess.Board()
         self.ui = interface.UserInterface(self.board)
         self.engine = RandomEngine(self.board)
+        self.engine = MCTS(self.board)
 
     def reset(self):
         self.ui.reset()
