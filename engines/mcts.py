@@ -7,29 +7,26 @@ from engines.engine import Engine
 
 
 class Node:
-    def __init__(self, board : chess.Board, parent=None, move=None):
+    def __init__(self, board: chess.Board, parent=None, move=None):
         self.board = board
         self.parent = parent
         self.move = move
         self.children = []
         self.visits = 0
         self.wins = 0
+        self.uct_value = 0
 
     def is_fully_expanded(self):
         return len(self.children) == len(list(self.board.legal_moves))
 
-    def uct(self, exploration_weight=1.4142):
-        return (self.wins / self.visits) + exploration_weight * sqrt(log(self.parent.visits) / self.visits)
+    def update_uct_value(self, exploration_weight=1.4142):
+        if self.visits > 0:
+            self.uct_value = (self.wins / self.visits) + exploration_weight * sqrt(log(self.parent.visits) / self.visits)
 
     def best_child(self, exploration_weight=1.4142):
-        best_score = float("-inf")
-        best_child = None
         for child in self.children:
-            uct_score = child.uct(exploration_weight)
-            if uct_score > best_score:
-                best_child = child
-                best_score = uct_score
-        return best_child
+            child.update_uct_value(exploration_weight)
+        return max(self.children, key=lambda child: child.uct_value)
 
     def add_child(self, child_state, move):
         child_node = Node(child_state, parent=self, move=move)
@@ -38,7 +35,7 @@ class Node:
 
 
 class MCTS(Engine):
-    def __init__(self, board : chess.Board, iterations=1000, depth=20):
+    def __init__(self, board: chess.Board, iterations=1000, depth=20):
         self.board = board
         self.evaluator = MaterialEvaluator()
         self.iterations = iterations
@@ -49,55 +46,55 @@ class MCTS(Engine):
         move = self.mcts()
         self.board.push(move)
 
-    def mcts(self):        
-        for __ in range(self.iterations):
+    def mcts(self):
+        for _ in range(self.iterations):
             node = self.node
 
-            # selection
+            # Selection
             while not node.board.is_game_over() and node.is_fully_expanded():
                 node = node.best_child()
 
-            # expansion
+            # Expansion
             if not node.is_fully_expanded() and not node.board.is_game_over():
-                # select move that's not child yet
                 move = random.choice([m for m in node.board.legal_moves if not any(child.move == m for child in node.children)])
                 new_board = node.board.copy()
                 new_board.push(move)
                 node = node.add_child(new_board, move)
 
-            # simulation
+            # Simulation
             simulated_board = node.board.copy()
             reward = self.simulate_game(simulated_board)
 
-            # backpropagation
+            # Backpropagation
             while node is not None:
                 node.visits += 1
-                node.wins += reward if node.board.turn == chess.WHITE else 1 - reward
+                if node.board.turn == chess.BLACK:
+                    node.wins += reward  # reward is from White's perspective
+                else:
+                    node.wins += 1 - reward  # reward is from Black's perspective
                 node = node.parent
 
-        # best child is that with most visits (recommended by authors of MCTS)
         return max(self.node.children, key=lambda n: n.visits).move
-        # return self.node.best_child(exploration_weight=0)
-    
-    def simulate_game(self, board : chess.Board):
-        for __ in range(self.depth):
+
+    def simulate_game(self, board: chess.Board):
+        for _ in range(self.depth):
             if board.is_game_over():
                 result = board.result()
                 if result == '1-0':
-                    return 1
+                    return 1  # White wins
                 elif result == '0-1':
-                    return 0
+                    return 0  # Black wins
                 else:
-                    return 0.5
+                    return 0.5  # Draw
 
             move = random.choice(list(board.legal_moves))
             board.push(move)
 
         evaluation = self.evaluator.evaluate(board)
 
-        if abs(evaluation) < 3:
+        if abs(evaluation) <= 2:
             return 0.5  # too small difference to determine win
         elif evaluation < 0:
-            return 0
+            return 0  # Black is winning
         else:
-            return 1
+            return 1  # White is winning
