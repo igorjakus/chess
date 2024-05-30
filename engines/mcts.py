@@ -1,13 +1,16 @@
+# mcts_engine.py
+
 from math import sqrt, log
 import random
 import chess
+import sys
+import json
 
-from engines.evaluator import MaterialEvaluator
-from engines.engine import Engine
-
+from evaluator import MaterialEvaluator
+from engine import Engine
 
 class Node:
-    def __init__(self, board : chess.Board, parent=None, move=None):
+    def __init__(self, board: chess.Board, parent=None, move=None):
         self.board = board
         self.parent = parent
         self.move = move
@@ -36,9 +39,8 @@ class Node:
         self.children.append(child_node)
         return child_node
 
-
 class MCTS(Engine):
-    def __init__(self, board : chess.Board, iterations=1000, depth=20):
+    def __init__(self, board: chess.Board, iterations=1000, depth=20):
         self.board = board
         self.evaluator = MaterialEvaluator()
         self.iterations = iterations
@@ -48,8 +50,9 @@ class MCTS(Engine):
         self.node = Node(self.board)
         move = self.mcts()
         self.board.push(move)
+        return move
 
-    def mcts(self):        
+    def mcts(self):
         for __ in range(self.iterations):
             node = self.node
 
@@ -77,9 +80,8 @@ class MCTS(Engine):
 
         # best child is that with most visits (recommended by authors of MCTS)
         return max(self.node.children, key=lambda n: n.visits).move
-        # return self.node.best_child(exploration_weight=0)
-    
-    def simulate_game(self, board : chess.Board):
+
+    def simulate_game(self, board: chess.Board):
         for __ in range(self.depth):
             if board.is_game_over():
                 result = board.result()
@@ -101,3 +103,15 @@ class MCTS(Engine):
             return 0
         else:
             return 1
+
+if __name__ == "__main__":
+    input_data = json.loads(sys.stdin.read())
+    board_fen = input_data["board_fen"]
+    iterations = input_data["iterations"]
+    depth = input_data["depth"]
+
+    board = chess.Board(board_fen)
+    engine = MCTS(board, iterations, depth)
+    move = engine.play_move()
+
+    sys.stdout.write(json.dumps({"move": move.uci()}))
