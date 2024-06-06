@@ -8,7 +8,7 @@ from resource_manager import ResourceManager
 
 class UserInterface:
     def __init__(self, board: chess.Board):
-        self.resources = ResourceManager(Config.SQUARE)
+        self.resources = ResourceManager(Config.SQUARE_SIZE)
 
         pygame.init()
         self.screen = pygame.display.set_mode(Config.SCREEN_SIZE)
@@ -27,7 +27,6 @@ class UserInterface:
     def reset(self):
         self.board.reset()
         self.selected_piece = None
-        self.flipped_view = False
         self.legal_moves = []
 
     def handle_events(self):
@@ -79,6 +78,7 @@ class UserInterface:
             if self.__move_piece(selected_square):
                 return True  # move was made
         return False  # move was not made
+
     def __move_piece(self, square):
         move = chess.Move(self.selected_piece, square)
         if self.__is_promotion(move):
@@ -111,7 +111,7 @@ class UserInterface:
         for i in range(8):
             for j in range(8):
                 color = Config.BLACK if (i + j) % 2 else Config.WHITE
-                rect = (i * Config.SQUARE, j * Config.SQUARE, Config.SQUARE, Config.SQUARE)
+                rect = (i * Config.SQUARE_SIZE, j * Config.SQUARE_SIZE, Config.SQUARE_SIZE, Config.SQUARE_SIZE)
                 pygame.draw.rect(self.screen, color, rect)
 
     def __draw_pieces(self):
@@ -120,7 +120,7 @@ class UserInterface:
             if piece:
                 piece_image = self.resources.piece_images[piece.symbol()]
                 pos_x, pos_y = self.__square_to_position(square)
-                rect = pygame.Rect(pos_x, pos_y, Config.SQUARE, Config.SQUARE)
+                rect = pygame.Rect(pos_x, pos_y, Config.SQUARE_SIZE, Config.SQUARE_SIZE)
                 self.screen.blit(piece_image, rect)
 
     def __draw_effects(self):
@@ -132,23 +132,23 @@ class UserInterface:
         for move in self.legal_moves:
             x, y = self.__square_to_position(move.to_square)
             if self.board.is_capture(move):
-                rect = (x, y, Config.SQUARE, Config.SQUARE)
+                rect = (x, y, Config.SQUARE_SIZE, Config.SQUARE_SIZE)
                 pygame.draw.rect(self.screen, Config.RED, rect)
             else:
-                center = (x + Config.SQUARE // 2, y + Config.SQUARE // 2)
-                pygame.draw.circle(self.screen, Config.LIGHT_BLUE, center, Config.SQUARE // 7)
+                center = (x + Config.SQUARE_SIZE // 2, y + Config.SQUARE_SIZE // 2)
+                pygame.draw.circle(self.screen, Config.LIGHT_BLUE, center, Config.SQUARE_SIZE // 7)
 
     def __highlight_selected(self):
         if self.selected_piece is not None:
             x, y = self.__square_to_position(self.selected_piece)
-            rect = (x, y, Config.SQUARE, Config.SQUARE)
+            rect = (x, y, Config.SQUARE_SIZE, Config.SQUARE_SIZE)
             pygame.draw.rect(self.screen, Config.LIGHT_BLUE, rect)
 
     def __highlight_check(self):
         if self.board.is_check():
             king_square = self.board.king(self.board.turn)
             x, y = self.__square_to_position(king_square)
-            rect = (x, y, Config.SQUARE, Config.SQUARE)
+            rect = (x, y, Config.SQUARE_SIZE, Config.SQUARE_SIZE)
             pygame.draw.rect(self.screen, Config.DARK_RED, rect)
 
     def __draw_game_over(self):
@@ -161,8 +161,8 @@ class UserInterface:
         self.screen.blit(small_text, small_text_rect)
 
     def __get_square_under_mouse(self, mouse_x, mouse_y):
-        selected_row = 7 - mouse_y // Config.SQUARE
-        selected_col = mouse_x // Config.SQUARE
+        selected_row = 7 - mouse_y // Config.SQUARE_SIZE
+        selected_col = mouse_x // Config.SQUARE_SIZE
 
         if self.flipped_view:
             selected_row = 7 - selected_row
@@ -175,8 +175,8 @@ class UserInterface:
         if self.flipped_view:
             col, row = 7 - col, 7 - row
 
-        x = col * Config.SQUARE
-        y = (7 - row) * Config.SQUARE
+        x = col * Config.SQUARE_SIZE
+        y = (7 - row) * Config.SQUARE_SIZE
         return x, y
 
     def flip(self):
