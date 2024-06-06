@@ -11,3 +11,9 @@ class Config:
     LIGHT_BLUE = (111, 159, 191)
     RED = (255, 102, 102)
     DARK_RED = (136, 8, 8)
+
+    # paths
+    STOCKFISH_PATH = "/Users/igorjakus/Downloads/stockfish/src/stockfish"
+
+    # engines variables
+    STOCKFISH_TIME_PER_MOVE = 0.5

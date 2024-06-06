@@ -1,14 +1,17 @@
 import chess
 import interface
 from engines.random import RandomEngine
-# from engines.mcts import MCTS
+from engines.mcts import MCTS_Engine
+from engines.stockfish import StockfishEngine
+
 
 class App:
     def __init__(self):
         self.board = chess.Board()
         self.ui = interface.UserInterface(self.board)
-        self.engine = RandomEngine(self.board)
-        # self.engine = MCTS(self.board)
+        # self.engine = RandomEngine(self.board)
+        # self.engine = MCTS_Engine(self.board)
+        self.engine = StockfishEngine(self.board)
         self.player_starts = True
 
     def reset(self):

@@ -34,7 +34,7 @@ class Node:
         return child_node
 
 
-class MCTS(Engine):
+class MCTS_Engine(Engine):
     def __init__(self, board: chess.Board, iterations=1000, depth=20):
         self.board = board
         self.evaluator = MaterialEvaluator()
@@ -93,7 +93,7 @@ class MCTS(Engine):
 
         evaluation = self.evaluator.evaluate(board)
 
-        if abs(evaluation) <= 1:
+        if abs(evaluation) <= 100:
             return 0.5  # too small difference to determine win
         elif evaluation < 0:
             return 0  # Black is winning
