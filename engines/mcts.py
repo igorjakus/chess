@@ -1,9 +1,9 @@
+from evaluators.material import MaterialEvaluator
+from engines.engine import Engine
+from config import Config
 from math import sqrt, log
 import random
 import chess
-
-from evaluators.material import MaterialEvaluator
-from engines.engine import Engine
 
 
 class Node:
@@ -35,11 +35,11 @@ class Node:
 
 
 class MCTS_Engine(Engine):
-    def __init__(self, board: chess.Board, iterations=1000, depth=20):
+    def __init__(self, board: chess.Board):
         self.board = board
         self.evaluator = MaterialEvaluator()
-        self.iterations = iterations
-        self.depth = depth
+        self.iterations = Config.MCTS_ITERATIONS
+        self.depth = Config.MCTS_DEPTH
 
     def play_move(self):
         self.node = Node(self.board)

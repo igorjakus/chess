@@ -17,3 +17,5 @@ class Config:
 
     # engines variables
     STOCKFISH_TIME_PER_MOVE = 0.5
+    MCTS_ITERATIONS = 1000
+    MCTS_DEPTH = 20
