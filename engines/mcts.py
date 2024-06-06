@@ -2,7 +2,7 @@ from math import sqrt, log
 import random
 import chess
 
-from engines.evaluator import MaterialEvaluator
+from evaluators.material import MaterialEvaluator
 from engines.engine import Engine
 
 
@@ -77,6 +77,7 @@ class MCTS(Engine):
         return max(self.node.children, key=lambda n: n.visits).move
 
     def simulate_game(self, board: chess.Board):
+        """Simulate game into some depth and then evaluate"""
         for _ in range(self.depth):
             if board.is_game_over():
                 result = board.result()
@@ -92,7 +93,7 @@ class MCTS(Engine):
 
         evaluation = self.evaluator.evaluate(board)
 
-        if abs(evaluation) <= 2:
+        if abs(evaluation) <= 1:
             return 0.5  # too small difference to determine win
         elif evaluation < 0:
             return 0  # Black is winning
