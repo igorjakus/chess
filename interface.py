@@ -48,7 +48,8 @@ class UserInterface:
                         return 1  # Player vs Player
                     elif event.key == pygame.K_2:
                         return 2  # Player vs AI
-                    elif event.key == pygame.K_3:
+                    elif event.key == pygame.K_3: 
+                        self.flipped_view = False
                         return 3  # AI vs AI
 
             self.__draw_select_mode()
@@ -78,6 +79,9 @@ class UserInterface:
             self.legal_moves = [move for move in self.board.legal_moves if move.from_square == square]
     
     def player_move(self):
+        if self.board.is_game_over():
+            return
+
         move_made = False
         while not move_made:
             for event in pygame.event.get():

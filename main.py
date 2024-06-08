@@ -75,10 +75,9 @@ class App:
                 while not self.board.is_game_over():
                     mode_actions[mode]()
                 
+                mode = self.ui.handle_game_over()
                 if mode == 2:
                     self.switch_player()
-                
-                mode = self.ui.handle_game_over()
     
         except SystemExit:
             self.quit()
