@@ -16,5 +16,5 @@ class StockfishEngine(Engine):
         result = self.engine.play(self.board, chess.engine.Limit(self.TIME_PER_MOVE))
         self.board.push(result.move)
 
-    def __del__(self):
+    def quit(self):
         self.engine.quit()

@@ -1,4 +1,3 @@
-from sys import exit
 import pygame
 import chess
 
@@ -32,7 +31,7 @@ class UserInterface:
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                self.quit_game()
+                self.quit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 self.__handle_mouse_click()
                 self.update_screen()
@@ -40,15 +39,36 @@ class UserInterface:
                 self.__handle_keydown(event)
                 self.update_screen()
 
-    def quit_game(self):
+    def handle_gameover(self):
+        selected_mode = None
+        while selected_mode not in {1, 2, 3}:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.quit()
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_1:
+                        selected_mode = 1  # Player vs Player
+                    elif event.key == pygame.K_2:
+                        selected_mode = 2  # Player vs AI
+                    elif event.key == pygame.K_3:
+                        selected_mode = 3  # AI vs AI
+
+            self.__draw_game_over_instructions()
+            pygame.display.flip()
+
+        return selected_mode
+
+    def quit(self):
         pygame.quit()
-        exit()
+        raise SystemExit
 
     def __handle_keydown(self, event):
         if event.key == pygame.K_SPACE:
             self.flipped_view = not self.flipped_view
         elif event.key == pygame.K_r:
             self.reset()
+        elif event.key == pygame.K_q:
+            self.quit()
 
     def _select_piece(self, square):
         if self.board.color_at(square) is self.board.turn:
@@ -60,7 +80,7 @@ class UserInterface:
         while not move_made:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    self.quit_game()
+                    self.quit()
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     move_made = self.__handle_mouse_click()
                 elif event.type == pygame.KEYDOWN:
@@ -156,8 +176,19 @@ class UserInterface:
         text_rect = text.get_rect(center=(Config.SCREEN_SIZE[0] // 2, Config.SCREEN_SIZE[1] // 2))
         self.screen.blit(text, text_rect)
 
-        small_text = self.small_font.render("Press r to start new game", True, Config.DARK_RED)
+        self.__draw_game_over_instructions()
+
+    def __draw_game_over_instructions(self):
+        small_text = self.small_font.render("Press 1 for Player vs Player", True, Config.DARK_RED)
         small_text_rect = small_text.get_rect(center=(Config.SCREEN_SIZE[0] // 2, Config.SCREEN_SIZE[1] // 2 + Config.SCREEN_SIZE[1] // 15))
+        self.screen.blit(small_text, small_text_rect)
+
+        small_text= self.small_font.render("Press 2 for Player vs AI", True, Config.DARK_RED)
+        small_text_rect = small_text.get_rect(center=(Config.SCREEN_SIZE[0] // 2, Config.SCREEN_SIZE[1] // 2 + 2 * (Config.SCREEN_SIZE[1] // 15)))
+        self.screen.blit(small_text, small_text_rect)
+
+        small_text = self.small_font.render("Press 3 for AI vs AI", True, Config.DARK_RED)
+        small_text_rect = small_text.get_rect(center=(Config.SCREEN_SIZE[0] // 2, Config.SCREEN_SIZE[1] // 2 + 3 * (Config.SCREEN_SIZE[1] // 15)))
         self.screen.blit(small_text, small_text_rect)
 
     def __get_square_under_mouse(self, mouse_x, mouse_y):
@@ -180,5 +211,4 @@ class UserInterface:
         return x, y
 
     def flip(self):
-        """Flip view so after player move each player see his pieces on the bottom of the board"""
         self.flipped_view = not self.flipped_view

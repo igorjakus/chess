@@ -99,3 +99,6 @@ class MCTS_Engine(Engine):
             return 0  # Black is winning
         else:
             return 1  # White is winning
+        
+    def quit(self):
+        self.__del__()

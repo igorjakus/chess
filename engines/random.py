@@ -7,3 +7,6 @@ class RandomEngine(Engine):
         moves = list(self.board.legal_moves)
         if moves:
             self.board.push(choice(moves))
+    
+    def quit(self):
+        self.__del__()

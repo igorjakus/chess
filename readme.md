@@ -10,6 +10,7 @@ This project is part of the Object-Oriented Programming course at the University
    - **MCTS (Monte Carlo Tree Search)**: A decision-making algorithm that uses randomness to explore the most promising moves and simulates game outcomes to choose the best move.
    - **Negamax**: A variant of the Minimax algorithm, optimized for zero-sum games like chess, with alpha-beta pruning.
    - **Random Player**: A simple algorithm that makes random moves.
+   - **Stockfish**: You can play against Stockfish. Warning! Remember to specify your stockfish path in config!
 
 2. **Optimization Techniques**
    - Advanced optimization tricks to enhance the performance of the chess engines.
@@ -26,3 +27,8 @@ This project is part of the Object-Oriented Programming course at the University
 - **Python**: The main programming language used for the project.
 - **python-chess**: A chess library for move generation, validation, and board representation.
 - **pygame**: A library for creating the graphical user interface and handling user interactions.
+
+
+### Configuration
+Feel free to modify config.py to fine-tune your experience
+If you want to use stockfish, remember to specify your stockfish path in config!

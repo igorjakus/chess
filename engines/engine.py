@@ -9,3 +9,7 @@ class Engine(ABC):
     @abstractmethod
     def play_move(self):
         pass
+
+    @abstractmethod
+    def quit(self):
+        pass

@@ -1,3 +1,4 @@
+import sys
 import chess
 import interface
 from engines.random import RandomEngine
@@ -46,29 +47,36 @@ class App:
         self.player_starts = not self.player_starts
         self.ui.flip()
 
-    def run(self, mode):
-        if mode not in [0, 1, 2]:
-            raise ValueError("Invalid mode. Please choose 0 (Player vs Player), 1 (Player vs AI), or 2 (AI vs AI).")
+    def quit(self):
+        self.engine.quit()
+        sys.exit()
+
+    def run(self):
+        try:
+            mode = self.ui.handle_gameover()
         
-        mode_actions = {
-            0: self.player_vs_player,
-            1: self.player_vs_ai,
-            2: self.ai_vs_ai
-        }
-
-        while True:
-            while not self.board.is_game_over():
-                mode_actions[mode]()
+            if mode not in [1, 2, 3]:
+                raise ValueError("Invalid mode. Please choose 0 (Player vs Player), 1 (Player vs AI), or 2 (AI vs AI).")
             
-            if mode == 1:
-                self.switch_player()
+            mode_actions = {
+                1: self.player_vs_player,
+                2: self.player_vs_ai,
+                3: self.ai_vs_ai
+            }
 
-            elif mode == 2:
-                self.reset()
-            
-            # bug: trzeba osobna funkcje ktora handluje eventy jak sie skonczy gra
-            self.ui.handle_events()
+            while True:
+                while not self.board.is_game_over():
+                    mode_actions[mode]()
+                
+                if mode == 2:
+                    self.switch_player()
+                
+                mode = self.ui.handle_gameover()
+    
+        except SystemExit:
+            self.quit()
+        
 
 if __name__ == "__main__":
     app = App()
-    app.run(mode=1)
+    app.run()
