@@ -2,18 +2,28 @@ import sys
 import chess
 import interface
 from engines.random import RandomEngine
-from engines.mcts import MCTS_Engine
+from engines.mcts import MCTSEngine
 from engines.stockfish import StockfishEngine
+from config import Config
 
 
 class App:
     def __init__(self):
         self.board = chess.Board()
         self.ui = interface.UserInterface(self.board)
-        # self.engine = RandomEngine(self.board)
-        # self.engine = MCTS_Engine(self.board)
-        self.engine = StockfishEngine(self.board)
+        self.__init_engine()
         self.player_starts = True
+
+    def __init_engine(self):
+        selected_engine = Config.ENGINE
+        if selected_engine == "stockfish":
+            self.engine = StockfishEngine(self.board)
+        elif selected_engine == "mcts":
+            self.engine = MCTSEngine(self.board)
+        elif selected_engine == "random":
+            self.engine = RandomEngine(self.board)
+        else:
+            raise IndexError("Wrong engine in config.py!")
 
     def reset(self):
         self.ui.reset()
@@ -52,18 +62,15 @@ class App:
         sys.exit()
 
     def run(self):
-        try:
-            mode = self.ui.handle_gameover()
-        
-            if mode not in [1, 2, 3]:
-                raise ValueError("Invalid mode. Please choose 0 (Player vs Player), 1 (Player vs AI), or 2 (AI vs AI).")
-            
-            mode_actions = {
-                1: self.player_vs_player,
-                2: self.player_vs_ai,
-                3: self.ai_vs_ai
-            }
+        mode_actions = {
+            1: self.player_vs_player,
+            2: self.player_vs_ai,
+            3: self.ai_vs_ai
+        }
 
+        try:
+            mode = self.ui.handle_init()
+            
             while True:
                 while not self.board.is_game_over():
                     mode_actions[mode]()
@@ -71,7 +78,7 @@ class App:
                 if mode == 2:
                     self.switch_player()
                 
-                mode = self.ui.handle_gameover()
+                mode = self.ui.handle_game_over()
     
         except SystemExit:
             self.quit()

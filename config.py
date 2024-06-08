@@ -1,7 +1,19 @@
 class Config:
+    # MOST IMPORTANT
+    ENGINE = "stockfish"  # ["stockfish", "mcts", "random"]
+    WINDOW_SIZE = 640
+
+    # paths
+    STOCKFISH_PATH = "/Users/igorjakus/Downloads/stockfish/src/stockfish"
+
+    # engines variables
+    STOCKFISH_TIME_PER_MOVE = 0.1
+    MCTS_ITERATIONS = 1000
+    MCTS_DEPTH = 20
+
     # sizes
-    SQUARE_SIZE = 80
-    SCREEN_SIZE = (8 * SQUARE_SIZE, 8 * SQUARE_SIZE)
+    SQUARE_SIZE = WINDOW_SIZE // 8
+    SCREEN_SIZE = (WINDOW_SIZE, WINDOW_SIZE)
     FONT = SCREEN_SIZE[0] // 10
     SMALL_FONT = SCREEN_SIZE[0] // 20
 
@@ -11,11 +23,3 @@ class Config:
     LIGHT_BLUE = (111, 159, 191)
     RED = (255, 102, 102)
     DARK_RED = (136, 8, 8)
-
-    # paths
-    STOCKFISH_PATH = "/Users/igorjakus/Downloads/stockfish/src/stockfish"
-
-    # engines variables
-    STOCKFISH_TIME_PER_MOVE = 0.5
-    MCTS_ITERATIONS = 1000
-    MCTS_DEPTH = 20

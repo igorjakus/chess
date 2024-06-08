@@ -34,7 +34,7 @@ class Node:
         return child_node
 
 
-class MCTS_Engine(Engine):
+class MCTSEngine(Engine):
     def __init__(self, board: chess.Board):
         self.board = board
         self.evaluator = MaterialEvaluator()

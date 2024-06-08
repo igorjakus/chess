@@ -1,6 +1,5 @@
 import pygame
 import chess
-
 from config import Config
 from resource_manager import ResourceManager
 
@@ -39,24 +38,27 @@ class UserInterface:
                 self.__handle_keydown(event)
                 self.update_screen()
 
-    def handle_gameover(self):
-        selected_mode = None
-        while selected_mode not in {1, 2, 3}:
+    def handle_init(self):
+        while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.quit()
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_1:
-                        selected_mode = 1  # Player vs Player
+                        return 1  # Player vs Player
                     elif event.key == pygame.K_2:
-                        selected_mode = 2  # Player vs AI
+                        return 2  # Player vs AI
                     elif event.key == pygame.K_3:
-                        selected_mode = 3  # AI vs AI
+                        return 3  # AI vs AI
 
-            self.__draw_game_over_instructions()
+            self.__draw_select_mode()
             pygame.display.flip()
-
-        return selected_mode
+    
+    def handle_game_over(self):
+        self.__draw_game_over()
+        mode = self.handle_init()
+        self.reset()
+        return mode
 
     def quit(self):
         pygame.quit()
@@ -123,8 +125,6 @@ class UserInterface:
         self.__draw_board()
         self.__draw_effects()
         self.__draw_pieces()
-        if self.board.is_game_over():
-            self.__draw_game_over()
         pygame.display.flip()
 
     def __draw_board(self):
@@ -173,22 +173,20 @@ class UserInterface:
 
     def __draw_game_over(self):
         text = self.font.render(f"GAME OVER {self.board.result()}", True, Config.DARK_RED)
-        text_rect = text.get_rect(center=(Config.SCREEN_SIZE[0] // 2, Config.SCREEN_SIZE[1] // 2))
+        text_rect = text.get_rect(center=(Config.SCREEN_SIZE[0] // 2, Config.SCREEN_SIZE[1] // 2 - (Config.SCREEN_SIZE[1] // 7)))
         self.screen.blit(text, text_rect)
 
-        self.__draw_game_over_instructions()
-
-    def __draw_game_over_instructions(self):
+    def __draw_select_mode(self):
         small_text = self.small_font.render("Press 1 for Player vs Player", True, Config.DARK_RED)
-        small_text_rect = small_text.get_rect(center=(Config.SCREEN_SIZE[0] // 2, Config.SCREEN_SIZE[1] // 2 + Config.SCREEN_SIZE[1] // 15))
+        small_text_rect = small_text.get_rect(center=(Config.SCREEN_SIZE[0] // 2, Config.SCREEN_SIZE[1] // 2 - Config.SCREEN_SIZE[1] // 15))
         self.screen.blit(small_text, small_text_rect)
 
         small_text= self.small_font.render("Press 2 for Player vs AI", True, Config.DARK_RED)
-        small_text_rect = small_text.get_rect(center=(Config.SCREEN_SIZE[0] // 2, Config.SCREEN_SIZE[1] // 2 + 2 * (Config.SCREEN_SIZE[1] // 15)))
+        small_text_rect = small_text.get_rect(center=(Config.SCREEN_SIZE[0] // 2, Config.SCREEN_SIZE[1] // 2))
         self.screen.blit(small_text, small_text_rect)
 
         small_text = self.small_font.render("Press 3 for AI vs AI", True, Config.DARK_RED)
-        small_text_rect = small_text.get_rect(center=(Config.SCREEN_SIZE[0] // 2, Config.SCREEN_SIZE[1] // 2 + 3 * (Config.SCREEN_SIZE[1] // 15)))
+        small_text_rect = small_text.get_rect(center=(Config.SCREEN_SIZE[0] // 2, Config.SCREEN_SIZE[1] // 2 + (Config.SCREEN_SIZE[1] // 15)))
         self.screen.blit(small_text, small_text_rect)
 
     def __get_square_under_mouse(self, mouse_x, mouse_y):

@@ -13,8 +13,9 @@ class StockfishEngine(Engine):
         self.board = board
 
     def play_move(self):
-        result = self.engine.play(self.board, chess.engine.Limit(self.TIME_PER_MOVE))
-        self.board.push(result.move)
+        if not self.board.is_game_over():
+            result = self.engine.play(self.board, chess.engine.Limit(self.TIME_PER_MOVE))
+            self.board.push(result.move)
 
     def quit(self):
         self.engine.quit()
