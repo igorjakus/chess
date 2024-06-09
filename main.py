@@ -1,6 +1,6 @@
 import sys
 import chess
-import interface
+import ui.interface as interface
 from engines.random import RandomEngine
 from engines.mcts import MCTSEngine
 from engines.stockfish import StockfishEngine

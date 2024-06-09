@@ -1,7 +1,7 @@
 import pygame
 import chess
 from config import Config
-from resource_manager import ResourceManager
+from ui.resource_manager import ResourceManager
 
 
 class UserInterface:
