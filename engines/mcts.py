@@ -42,6 +42,9 @@ class MCTSEngine(Engine):
         self.depth = Config.MCTS_DEPTH
 
     def play_move(self):
+        if self.board.is_game_over():
+            return
+
         self.node = Node(self.board)
         move = self.mcts()
         self.board.push(move)
@@ -101,4 +104,4 @@ class MCTSEngine(Engine):
             return 1  # White is winning
         
     def quit(self):
-        self.__del__()
+        pass  # no need to delete anything manually
