@@ -30,7 +30,7 @@ pip install -r requirements.txt
 ### Installation
 ```bash
 git clone https://github.com/igorjakus/chess.git
-cd yourproject
+cd chess
 pip install -r requirements.txt
 ```
 
