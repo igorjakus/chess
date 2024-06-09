@@ -1,10 +1,11 @@
 class Config:
     # MOST IMPORTANT
     ENGINE = "negamax"  # ["stockfish", "mcts", "random", "negamax"]
+    SECONDARY_ENGINE = "mcts"  # for engine vs engine mode
     WINDOW_SIZE = 640
 
     # paths
-    STOCKFISH_PATH = "/Users/igorjakus/Downloads/stockfish/src/stockfish"
+    STOCKFISH_PATH = "stockfish/src/stockfish"
 
     # engines variables
     STOCKFISH_TIME_PER_MOVE = 0.1

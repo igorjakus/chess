@@ -34,13 +34,12 @@ class AdvancedEvaluator(Evaluator):
         self.cache[fen] = value
         return value
 
-    def gameover_evaluation(self, board):
+    def gameover_evaluation(self, board : chess.Board):
         winner = board.outcome().winner
         if winner is None:
             return 0  # draw
-        if winner == chess.WHITE: 
-            return self.MAX_SCORE - len(board.move_stack) # prioritise faster checkmates
-        return -self.MAX_SCORE + len(board.move_stack)    # prioritise faster checkmates
+        score = self.MAX_SCORE - len(board.move_stack) # prioritise faster checkmates
+        return score if winner == board.turn else -score
 
     @staticmethod
     def material(board : chess.Board):

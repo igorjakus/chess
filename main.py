@@ -16,15 +16,27 @@ class App:
         self.player_starts = True
 
     def __init_engine(self):
-        selected_engine = Config.ENGINE
-        if selected_engine == "stockfish":
+        main_engine = Config.ENGINE
+        if main_engine == "stockfish":
             self.engine = StockfishEngine(self.board)
-        elif selected_engine == "mcts":
+        elif main_engine == "mcts":
             self.engine = MCTSEngine(self.board)
-        elif selected_engine == "random":
+        elif main_engine == "random":
             self.engine = RandomEngine(self.board)
-        elif selected_engine == "negamax":
+        elif main_engine == "negamax":
             self.engine = NegamaxEngine(self.board)
+        else:
+            raise IndexError("Wrong engine in config.py!")
+
+        secondary_engine = Config.SECONDARY_ENGINE
+        if secondary_engine == "stockfish":
+            self.second_engine = StockfishEngine(self.board)
+        elif secondary_engine == "mcts":
+            self.second_engine = MCTSEngine(self.board)
+        elif secondary_engine == "random":
+            self.second_engine = RandomEngine(self.board)
+        elif secondary_engine == "negamax":
+            self.second_engine = NegamaxEngine(self.board)
         else:
             raise IndexError("Wrong engine in config.py!")
 
@@ -52,9 +64,11 @@ class App:
             self.ui.update_screen()
 
     def ai_vs_ai(self):
-        for _ in range(2):
-            self.engine.play_move()
-            self.ui.update_screen()
+        self.engine.play_move()
+        self.ui.update_screen()
+
+        self.second_engine.play_move()
+        self.ui.update_screen()
 
     def switch_player(self):
         self.player_starts = not self.player_starts
