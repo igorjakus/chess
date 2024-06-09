@@ -1,6 +1,6 @@
 class Config:
     # MOST IMPORTANT
-    ENGINE = "mcts"  # ["stockfish", "mcts", "random"]
+    ENGINE = "negamax"  # ["stockfish", "mcts", "random", "negamax"]
     WINDOW_SIZE = 640
 
     # paths
@@ -10,6 +10,7 @@ class Config:
     STOCKFISH_TIME_PER_MOVE = 0.1
     MCTS_ITERATIONS = 100
     MCTS_DEPTH = 10
+    NEGAMAX_DEPTH = 2
 
     # sizes
     SQUARE_SIZE = WINDOW_SIZE // 8

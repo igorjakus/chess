@@ -4,6 +4,7 @@ import ui.interface as interface
 from engines.random import RandomEngine
 from engines.mcts import MCTSEngine
 from engines.stockfish import StockfishEngine
+from engines.negamax import NegamaxEngine
 from config import Config
 
 
@@ -22,6 +23,8 @@ class App:
             self.engine = MCTSEngine(self.board)
         elif selected_engine == "random":
             self.engine = RandomEngine(self.board)
+        elif selected_engine == "negamax":
+            self.engine = NegamaxEngine(self.board)
         else:
             raise IndexError("Wrong engine in config.py!")
 
