@@ -21,11 +21,11 @@ class AdvancedEvaluator(Evaluator):
 
         value = (
             self.material(board) + 
-            self.attacking_squares(board) * 0.1 +
-            self.tempo(board) * 0.25 +
-            self.aggressiveness(board) * 0.2 +
-            self.pawn_advancement(board) * 0.01 +
-            self.knight_position(board) + 0.01
+            self.attacking_squares(board) * 5 +
+            self.tempo(board) * 10 +
+            self.aggressiveness(board) * 10 +
+            self.pawn_advancement(board) * 10 +  # tu tez moze byc blad
+            self.knight_position(board) # tu moze byc blad
         )
 
         value *= 1 if board.turn == chess.WHITE else -1
@@ -45,11 +45,11 @@ class AdvancedEvaluator(Evaluator):
         white = board.occupied_co[chess.WHITE]
         black = board.occupied_co[chess.BLACK]
         return (
-            chess.popcount(white & board.pawns) - chess.popcount(black & board.pawns) +
-            3 * (chess.popcount(white & board.knights) - chess.popcount(black & board.knights)) +
-            3 * (chess.popcount(white & board.bishops) - chess.popcount(black & board.bishops)) +
-            5 * (chess.popcount(white & board.rooks) - chess.popcount(black & board.rooks)) +
-            9 * (chess.popcount(white & board.queens) - chess.popcount(black & board.queens))
+            100 * chess.popcount(white & board.pawns) - chess.popcount(black & board.pawns) +
+            300 * (chess.popcount(white & board.knights) - chess.popcount(black & board.knights)) +
+            300 * (chess.popcount(white & board.bishops) - chess.popcount(black & board.bishops)) +
+            500 * (chess.popcount(white & board.rooks) - chess.popcount(black & board.rooks)) +
+            900 * (chess.popcount(white & board.queens) - chess.popcount(black & board.queens))
         )
 
     def tempo(self, board: chess.Board):
