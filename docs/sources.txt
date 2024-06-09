@@ -1,7 +1,9 @@
+List of sources i used to develop this project:
 1. CHESS PROGRAMMING WIKI: https://www.chessprogramming.org/Main_Page
 2. PYTHON-CHESS DOCS: https://python-chess.readthedocs.io/en/latest/
 3. PYGAME DOCS: https://www.pygame.org/docs/
 4. PYTHON DOCS: https://docs.python.org/3.9/
 5. ARTIFICIAL INTELLIGENCE LECTURES BY DR PAWEŁ RYCHLIKOWSKI
-
+6. STOCKFISH ON GITHUB: https://github.com/official-stockfish/Stockfish/wiki/
+7. JOHN LEVINE LECTURES ON YOUTUBE: https://www.youtube.com/@johnlevine2909
 
