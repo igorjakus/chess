@@ -1,10 +1,13 @@
 import chess
+import chess.polyglot
 from engines.engine import Engine
 from evaluators.advanced import AdvancedEvaluator
 from config import Config
 
 
 class NegamaxEngine(Engine):
+    OPENING_BOOK_PATH = f"assets/opening_books/{Config.NEGAMAX_OPENING_BOOK}.bin"
+
     def __init__(self, board):
         self.board = board
         self.depth = Config.NEGAMAX_DEPTH
@@ -12,12 +15,27 @@ class NegamaxEngine(Engine):
 
     def play_move(self):
         if self.board.is_game_over():
-            return 
+            return
+    
+        # play move from opening book
+        if self.play_opening():
+            return
+
         move = self.best_move(self.board, self.depth)
         self.board.push(move)
 
     def quit(self):
         pass  # no need to delete anything manually
+
+    def play_opening(self):
+        with chess.polyglot.open_reader(self.OPENING_BOOK_PATH) as reader:
+            try:
+                move = reader.weighted_choice(self.board).move
+            except IndexError:  # there is no answer in the book
+                return False
+
+        self.board.push(move)
+        return True
 
     def best_move(self, state: chess.Board, depth):
         best_move = None

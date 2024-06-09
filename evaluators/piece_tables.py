@@ -1,4 +1,5 @@
-"""I found this table at chessprogramming.com and tried to fine-tune them"""
+"""I found this table at chessprogramming.com and tried to fine-tune them
+Remember to flip them (63 - square) because 0 in python-chess is left-down corner"""
 
 PAWN_TABLE = [
     0,  0,  0,  0,  0,  0,  0,  0,

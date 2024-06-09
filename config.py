@@ -11,6 +11,7 @@ class Config:
     MCTS_ITERATIONS = 100
     MCTS_DEPTH = 10
     NEGAMAX_DEPTH = 2
+    NEGAMAX_OPENING_BOOK = "baron30" # ["baron30", "human", "titans"]
 
     # sizes
     SQUARE_SIZE = WINDOW_SIZE // 8
