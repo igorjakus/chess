@@ -6,4 +6,4 @@ List of sources i used to develop this project:
 5. ARTIFICIAL INTELLIGENCE LECTURES BY DR PAWEŁ RYCHLIKOWSKI
 6. STOCKFISH ON GITHUB: https://github.com/official-stockfish/Stockfish/wiki/
 7. JOHN LEVINE LECTURES ON YOUTUBE: https://www.youtube.com/@johnlevine2909
-
+8. TALKCHESS FORUM: https://www.talkchess.com/
