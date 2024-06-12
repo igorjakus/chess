@@ -14,6 +14,7 @@ class NegamaxEngine(Engine):
         self.evaluator = AdvancedEvaluator()
 
     def play_move(self):
+        """Engine plays move and change board"""
         if self.board.is_game_over():
             return
     
@@ -25,9 +26,11 @@ class NegamaxEngine(Engine):
         self.board.push(move)
 
     def quit(self):
+        """Safely turns off the engine"""
         pass  # no need to delete anything manually
 
     def play_opening(self):
+        """Try to play opening, if it's possible return True, otherwise False"""
         with chess.polyglot.open_reader(self.OPENING_BOOK_PATH) as reader:
             try:
                 move = reader.weighted_choice(self.board).move
@@ -38,6 +41,7 @@ class NegamaxEngine(Engine):
         return True
 
     def best_move(self, state: chess.Board, depth):
+        """Returns best move at given depth"""
         best_move = None
         best_value = float("-inf")
 
@@ -53,6 +57,7 @@ class NegamaxEngine(Engine):
         return best_move
     
     def negamax(self, state: chess.Board, depth, alpha, beta):
+        """Use negamax algorithm to determine best-move evaluation"""
         if depth <= 0 or state.is_game_over():
             return self.evaluator.evaluate(state)
 

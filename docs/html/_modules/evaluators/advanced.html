@@ -1,0 +1,285 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>evaluators.advanced &#8212; SalmonChess  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for evaluators.advanced</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">chess</span>
+<span class="kn">from</span> <span class="nn">evaluators.evaluator</span> <span class="kn">import</span> <span class="n">Evaluator</span>
+<span class="kn">from</span> <span class="nn">evaluators.piece_tables</span> <span class="kn">import</span> <span class="n">PAWN_TABLE</span><span class="p">,</span> <span class="n">KNIGHT_TABLE</span><span class="p">,</span> <span class="n">BISHOP_TABLE</span><span class="p">,</span> <span class="n">ROOK_TABLE</span>
+<span class="kn">from</span> <span class="nn">evaluators.piece_tables</span> <span class="kn">import</span> <span class="n">QUEEN_TABLE</span><span class="p">,</span> <span class="n">KING_MIDGAME_TABLE</span><span class="p">,</span> <span class="n">KING_ENDGAME_TABLE</span>
+<span class="kn">from</span> <span class="nn">evaluators.pesto</span> <span class="kn">import</span> <span class="n">MG_PAWN</span><span class="p">,</span> <span class="n">MG_KNIGHT</span><span class="p">,</span> <span class="n">MG_BISHOP</span><span class="p">,</span> <span class="n">MG_KING</span><span class="p">,</span> <span class="n">MG_QUEEN</span><span class="p">,</span> <span class="n">MG_ROOK</span>
+<span class="kn">from</span> <span class="nn">evaluators.pesto</span> <span class="kn">import</span> <span class="n">EG_PAWN</span><span class="p">,</span> <span class="n">EG_KNIGHT</span><span class="p">,</span> <span class="n">EG_BISHOP</span><span class="p">,</span> <span class="n">EG_KING</span><span class="p">,</span> <span class="n">EG_QUEEN</span><span class="p">,</span> <span class="n">EG_ROOK</span>
+
+
+<div class="viewcode-block" id="AdvancedEvaluator"><a class="viewcode-back" href="../../modules.html#evaluators.advanced.AdvancedEvaluator">[docs]</a><span class="k">class</span> <span class="nc">AdvancedEvaluator</span><span class="p">(</span><span class="n">Evaluator</span><span class="p">):</span>
+    <span class="n">MAX_SCORE</span> <span class="o">=</span> <span class="mi">10_000</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cache</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+<div class="viewcode-block" id="AdvancedEvaluator.evaluate"><a class="viewcode-back" href="../../modules.html#evaluators.advanced.AdvancedEvaluator.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">board</span><span class="p">:</span> <span class="n">chess</span><span class="o">.</span><span class="n">Board</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns evaluation for given board in centipawns&quot;&quot;&quot;</span>
+        <span class="n">fen</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">board_fen</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">fen</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="n">fen</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">board</span><span class="o">.</span><span class="n">is_game_over</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gameover_evaluation</span><span class="p">(</span><span class="n">board</span><span class="p">)</span>
+
+        <span class="n">value</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">material</span><span class="p">(</span><span class="n">board</span><span class="p">)</span> <span class="o">+</span> 
+            <span class="c1"># self.piece_tables(board) +</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pesto_tables</span><span class="p">(</span><span class="n">board</span><span class="p">)</span>
+            <span class="c1"># self.tempo(board) * 10</span>
+            <span class="c1"># self.attacking_squares(board) * 5 +</span>
+            <span class="c1"># self.aggressiveness(board) * 10</span>
+        <span class="p">)</span>
+
+        <span class="n">value</span> <span class="o">*=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">board</span><span class="o">.</span><span class="n">turn</span> <span class="o">==</span> <span class="n">chess</span><span class="o">.</span><span class="n">WHITE</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="n">fen</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">return</span> <span class="n">value</span></div>
+
+<div class="viewcode-block" id="AdvancedEvaluator.gameover_evaluation"><a class="viewcode-back" href="../../modules.html#evaluators.advanced.AdvancedEvaluator.gameover_evaluation">[docs]</a>    <span class="k">def</span> <span class="nf">gameover_evaluation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">board</span> <span class="p">:</span> <span class="n">chess</span><span class="o">.</span><span class="n">Board</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate when game is over&quot;&quot;&quot;</span>
+        <span class="n">winner</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">outcome</span><span class="p">()</span><span class="o">.</span><span class="n">winner</span>
+        <span class="k">if</span> <span class="n">winner</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span>  <span class="c1"># draw</span>
+        <span class="n">score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">MAX_SCORE</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">board</span><span class="o">.</span><span class="n">move_stack</span><span class="p">)</span> <span class="c1"># prioritise faster checkmates</span>
+        <span class="k">return</span> <span class="n">score</span> <span class="k">if</span> <span class="n">winner</span> <span class="o">==</span> <span class="n">board</span><span class="o">.</span><span class="n">turn</span> <span class="k">else</span> <span class="o">-</span><span class="n">score</span></div>
+
+<div class="viewcode-block" id="AdvancedEvaluator.material"><a class="viewcode-back" href="../../modules.html#evaluators.advanced.AdvancedEvaluator.material">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">material</span><span class="p">(</span><span class="n">board</span> <span class="p">:</span> <span class="n">chess</span><span class="o">.</span><span class="n">Board</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns material balance in centipawns&quot;&quot;&quot;</span>
+        <span class="n">white</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">occupied_co</span><span class="p">[</span><span class="n">chess</span><span class="o">.</span><span class="n">WHITE</span><span class="p">]</span>
+        <span class="n">black</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">occupied_co</span><span class="p">[</span><span class="n">chess</span><span class="o">.</span><span class="n">BLACK</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="mi">100</span> <span class="o">*</span> <span class="n">chess</span><span class="o">.</span><span class="n">popcount</span><span class="p">(</span><span class="n">white</span> <span class="o">&amp;</span> <span class="n">board</span><span class="o">.</span><span class="n">pawns</span><span class="p">)</span> <span class="o">-</span> <span class="n">chess</span><span class="o">.</span><span class="n">popcount</span><span class="p">(</span><span class="n">black</span> <span class="o">&amp;</span> <span class="n">board</span><span class="o">.</span><span class="n">pawns</span><span class="p">)</span> <span class="o">+</span>
+            <span class="mi">300</span> <span class="o">*</span> <span class="p">(</span><span class="n">chess</span><span class="o">.</span><span class="n">popcount</span><span class="p">(</span><span class="n">white</span> <span class="o">&amp;</span> <span class="n">board</span><span class="o">.</span><span class="n">knights</span><span class="p">)</span> <span class="o">-</span> <span class="n">chess</span><span class="o">.</span><span class="n">popcount</span><span class="p">(</span><span class="n">black</span> <span class="o">&amp;</span> <span class="n">board</span><span class="o">.</span><span class="n">knights</span><span class="p">))</span> <span class="o">+</span>
+            <span class="mi">300</span> <span class="o">*</span> <span class="p">(</span><span class="n">chess</span><span class="o">.</span><span class="n">popcount</span><span class="p">(</span><span class="n">white</span> <span class="o">&amp;</span> <span class="n">board</span><span class="o">.</span><span class="n">bishops</span><span class="p">)</span> <span class="o">-</span> <span class="n">chess</span><span class="o">.</span><span class="n">popcount</span><span class="p">(</span><span class="n">black</span> <span class="o">&amp;</span> <span class="n">board</span><span class="o">.</span><span class="n">bishops</span><span class="p">))</span> <span class="o">+</span>
+            <span class="mi">500</span> <span class="o">*</span> <span class="p">(</span><span class="n">chess</span><span class="o">.</span><span class="n">popcount</span><span class="p">(</span><span class="n">white</span> <span class="o">&amp;</span> <span class="n">board</span><span class="o">.</span><span class="n">rooks</span><span class="p">)</span> <span class="o">-</span> <span class="n">chess</span><span class="o">.</span><span class="n">popcount</span><span class="p">(</span><span class="n">black</span> <span class="o">&amp;</span> <span class="n">board</span><span class="o">.</span><span class="n">rooks</span><span class="p">))</span> <span class="o">+</span>
+            <span class="mi">900</span> <span class="o">*</span> <span class="p">(</span><span class="n">chess</span><span class="o">.</span><span class="n">popcount</span><span class="p">(</span><span class="n">white</span> <span class="o">&amp;</span> <span class="n">board</span><span class="o">.</span><span class="n">queens</span><span class="p">)</span> <span class="o">-</span> <span class="n">chess</span><span class="o">.</span><span class="n">popcount</span><span class="p">(</span><span class="n">black</span> <span class="o">&amp;</span> <span class="n">board</span><span class="o">.</span><span class="n">queens</span><span class="p">))</span>
+        <span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">piece_tables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">board</span><span class="p">:</span> <span class="n">chess</span><span class="o">.</span><span class="n">Board</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="n">evaluation</span> <span class="o">=</span> <span class="mi">0</span>
+        
+        <span class="k">for</span> <span class="n">square</span> <span class="ow">in</span> <span class="n">chess</span><span class="o">.</span><span class="n">SQUARES</span><span class="p">:</span>
+            <span class="n">piece</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">piece_at</span><span class="p">(</span><span class="n">square</span><span class="p">)</span>
+            
+            <span class="k">if</span> <span class="n">piece</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">piece_type</span> <span class="o">=</span> <span class="n">piece</span><span class="o">.</span><span class="n">piece_type</span>
+                <span class="n">color</span> <span class="o">=</span> <span class="n">piece</span><span class="o">.</span><span class="n">color</span>
+                
+                <span class="k">if</span> <span class="n">piece_type</span> <span class="o">==</span> <span class="n">chess</span><span class="o">.</span><span class="n">PAWN</span><span class="p">:</span>
+                    <span class="n">table</span> <span class="o">=</span> <span class="n">PAWN_TABLE</span>
+                <span class="k">elif</span> <span class="n">piece_type</span> <span class="o">==</span> <span class="n">chess</span><span class="o">.</span><span class="n">KNIGHT</span><span class="p">:</span>
+                    <span class="n">table</span> <span class="o">=</span> <span class="n">KNIGHT_TABLE</span>
+                <span class="k">elif</span> <span class="n">piece_type</span> <span class="o">==</span> <span class="n">chess</span><span class="o">.</span><span class="n">BISHOP</span><span class="p">:</span>
+                    <span class="n">table</span> <span class="o">=</span> <span class="n">BISHOP_TABLE</span>
+                <span class="k">elif</span> <span class="n">piece_type</span> <span class="o">==</span> <span class="n">chess</span><span class="o">.</span><span class="n">ROOK</span><span class="p">:</span>
+                    <span class="n">table</span> <span class="o">=</span> <span class="n">ROOK_TABLE</span>
+                <span class="k">elif</span> <span class="n">piece_type</span> <span class="o">==</span> <span class="n">chess</span><span class="o">.</span><span class="n">QUEEN</span><span class="p">:</span>
+                    <span class="n">table</span> <span class="o">=</span> <span class="n">QUEEN_TABLE</span>
+                <span class="k">elif</span> <span class="n">piece_type</span> <span class="o">==</span> <span class="n">chess</span><span class="o">.</span><span class="n">KING</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_endgame</span><span class="p">(</span><span class="n">board</span><span class="p">):</span>
+                        <span class="n">table</span> <span class="o">=</span> <span class="n">KING_ENDGAME_TABLE</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">table</span> <span class="o">=</span> <span class="n">KING_MIDGAME_TABLE</span> 
+    
+                <span class="k">if</span> <span class="n">color</span> <span class="o">==</span> <span class="n">chess</span><span class="o">.</span><span class="n">WHITE</span><span class="p">:</span>
+                    <span class="n">evaluation</span> <span class="o">+=</span> <span class="n">table</span><span class="p">[</span><span class="n">chess</span><span class="o">.</span><span class="n">square_mirror</span><span class="p">(</span><span class="n">square</span><span class="p">)]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">evaluation</span> <span class="o">-=</span> <span class="n">table</span><span class="p">[</span><span class="n">square</span><span class="p">]</span>
+        
+        <span class="k">return</span> <span class="n">evaluation</span>
+
+<div class="viewcode-block" id="AdvancedEvaluator.pesto_tables"><a class="viewcode-back" href="../../modules.html#evaluators.advanced.AdvancedEvaluator.pesto_tables">[docs]</a>    <span class="k">def</span> <span class="nf">pesto_tables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">board</span><span class="p">:</span> <span class="n">chess</span><span class="o">.</span><span class="n">Board</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Use PeSTO as piece-table to estimate pieces strategic placement&quot;&quot;&quot;</span>
+        <span class="n">evaluation</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">endgame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_endgame</span><span class="p">(</span><span class="n">board</span><span class="p">)</span>
+        
+        <span class="k">for</span> <span class="n">square</span> <span class="ow">in</span> <span class="n">chess</span><span class="o">.</span><span class="n">SQUARES</span><span class="p">:</span>
+            <span class="n">piece</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">piece_at</span><span class="p">(</span><span class="n">square</span><span class="p">)</span>
+            
+            <span class="k">if</span> <span class="n">piece</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">piece_type</span> <span class="o">=</span> <span class="n">piece</span><span class="o">.</span><span class="n">piece_type</span>
+                <span class="n">color</span> <span class="o">=</span> <span class="n">piece</span><span class="o">.</span><span class="n">color</span>
+                
+                <span class="k">if</span> <span class="n">piece_type</span> <span class="o">==</span> <span class="n">chess</span><span class="o">.</span><span class="n">PAWN</span><span class="p">:</span>
+                    <span class="n">table</span> <span class="o">=</span> <span class="n">EG_PAWN</span> <span class="k">if</span> <span class="n">endgame</span> <span class="k">else</span> <span class="n">MG_PAWN</span>
+                <span class="k">elif</span> <span class="n">piece_type</span> <span class="o">==</span> <span class="n">chess</span><span class="o">.</span><span class="n">KNIGHT</span><span class="p">:</span>
+                    <span class="n">table</span> <span class="o">=</span> <span class="n">EG_KNIGHT</span> <span class="k">if</span> <span class="n">endgame</span> <span class="k">else</span> <span class="n">MG_KNIGHT</span>
+                <span class="k">elif</span> <span class="n">piece_type</span> <span class="o">==</span> <span class="n">chess</span><span class="o">.</span><span class="n">BISHOP</span><span class="p">:</span>
+                    <span class="n">table</span> <span class="o">=</span> <span class="n">EG_BISHOP</span> <span class="k">if</span> <span class="n">endgame</span> <span class="k">else</span> <span class="n">MG_BISHOP</span>
+                <span class="k">elif</span> <span class="n">piece_type</span> <span class="o">==</span> <span class="n">chess</span><span class="o">.</span><span class="n">ROOK</span><span class="p">:</span>
+                    <span class="n">table</span> <span class="o">=</span> <span class="n">EG_ROOK</span> <span class="k">if</span> <span class="n">endgame</span> <span class="k">else</span> <span class="n">MG_ROOK</span>
+                <span class="k">elif</span> <span class="n">piece_type</span> <span class="o">==</span> <span class="n">chess</span><span class="o">.</span><span class="n">QUEEN</span><span class="p">:</span>
+                    <span class="n">table</span> <span class="o">=</span> <span class="n">EG_QUEEN</span> <span class="k">if</span> <span class="n">endgame</span> <span class="k">else</span> <span class="n">MG_QUEEN</span>
+                <span class="k">elif</span> <span class="n">piece_type</span> <span class="o">==</span> <span class="n">chess</span><span class="o">.</span><span class="n">KING</span><span class="p">:</span>
+                    <span class="n">table</span> <span class="o">=</span> <span class="n">EG_KING</span> <span class="k">if</span> <span class="n">endgame</span> <span class="k">else</span> <span class="n">MG_KING</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                
+                <span class="k">if</span> <span class="n">color</span> <span class="o">==</span> <span class="n">chess</span><span class="o">.</span><span class="n">WHITE</span><span class="p">:</span>
+                    <span class="n">evaluation</span> <span class="o">+=</span> <span class="n">table</span><span class="p">[</span><span class="n">chess</span><span class="o">.</span><span class="n">square_mirror</span><span class="p">(</span><span class="n">square</span><span class="p">)]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">evaluation</span> <span class="o">-=</span> <span class="n">table</span><span class="p">[</span><span class="n">square</span><span class="p">]</span>
+        
+        <span class="k">return</span> <span class="n">evaluation</span></div>
+
+<div class="viewcode-block" id="AdvancedEvaluator.tempo"><a class="viewcode-back" href="../../modules.html#evaluators.advanced.AdvancedEvaluator.tempo">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">tempo</span><span class="p">(</span><span class="n">board</span><span class="p">:</span> <span class="n">chess</span><span class="o">.</span><span class="n">Board</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reward if white has tempo, punish if black has tempo&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">board</span><span class="o">.</span><span class="n">turn</span> <span class="o">==</span> <span class="n">chess</span><span class="o">.</span><span class="n">WHITE</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span></div>
+
+<div class="viewcode-block" id="AdvancedEvaluator.attacking_squares"><a class="viewcode-back" href="../../modules.html#evaluators.advanced.AdvancedEvaluator.attacking_squares">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">attacking_squares</span><span class="p">(</span><span class="n">board</span><span class="p">:</span> <span class="n">chess</span><span class="o">.</span><span class="n">Board</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Count how many squares each side attacks&quot;&quot;&quot;</span>
+        <span class="n">white_moves</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">black_moves</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">square</span> <span class="ow">in</span> <span class="n">chess</span><span class="o">.</span><span class="n">SQUARES</span><span class="p">:</span>
+            <span class="n">piece</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">piece_at</span><span class="p">(</span><span class="n">square</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">piece</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">attacks_mask</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">attacks_mask</span><span class="p">(</span><span class="n">square</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">piece</span><span class="o">.</span><span class="n">color</span> <span class="o">==</span> <span class="n">chess</span><span class="o">.</span><span class="n">WHITE</span><span class="p">:</span>
+                    <span class="n">white_moves</span> <span class="o">+=</span> <span class="n">chess</span><span class="o">.</span><span class="n">popcount</span><span class="p">(</span><span class="n">attacks_mask</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">black_moves</span> <span class="o">+=</span> <span class="n">chess</span><span class="o">.</span><span class="n">popcount</span><span class="p">(</span><span class="n">attacks_mask</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">white_moves</span> <span class="o">-</span> <span class="n">black_moves</span></div>
+      
+<div class="viewcode-block" id="AdvancedEvaluator.aggressiveness"><a class="viewcode-back" href="../../modules.html#evaluators.advanced.AdvancedEvaluator.aggressiveness">[docs]</a>    <span class="k">def</span> <span class="nf">aggressiveness</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">board</span><span class="p">:</span> <span class="n">chess</span><span class="o">.</span><span class="n">Board</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns sum of attackers for each square near king&quot;&quot;&quot;</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># ile białych figur atakuje czarnego króla i jego otoczenie</span>
+        <span class="k">for</span> <span class="n">square</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_king_surroundings</span><span class="p">(</span><span class="n">board</span><span class="p">,</span> <span class="n">chess</span><span class="o">.</span><span class="n">BLACK</span><span class="p">):</span>
+            <span class="n">value</span> <span class="o">+=</span> <span class="n">chess</span><span class="o">.</span><span class="n">popcount</span><span class="p">(</span><span class="n">board</span><span class="o">.</span><span class="n">attackers_mask</span><span class="p">(</span><span class="n">chess</span><span class="o">.</span><span class="n">WHITE</span><span class="p">,</span> <span class="n">square</span><span class="p">))</span>
+        
+        <span class="c1"># ile czarnych figur atakuje białego króla i jego otoczenie</span>
+        <span class="k">for</span> <span class="n">square</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_king_surroundings</span><span class="p">(</span><span class="n">board</span><span class="p">,</span> <span class="n">chess</span><span class="o">.</span><span class="n">WHITE</span><span class="p">):</span>
+            <span class="n">value</span> <span class="o">-=</span> <span class="n">chess</span><span class="o">.</span><span class="n">popcount</span><span class="p">(</span><span class="n">board</span><span class="o">.</span><span class="n">attackers_mask</span><span class="p">(</span><span class="n">chess</span><span class="o">.</span><span class="n">BLACK</span><span class="p">,</span> <span class="n">square</span><span class="p">))</span>
+        
+        <span class="k">return</span> <span class="n">value</span></div>
+
+<div class="viewcode-block" id="AdvancedEvaluator.get_king_surroundings"><a class="viewcode-back" href="../../modules.html#evaluators.advanced.AdvancedEvaluator.get_king_surroundings">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">get_king_surroundings</span><span class="p">(</span><span class="n">board</span><span class="p">:</span> <span class="n">chess</span><span class="o">.</span><span class="n">Board</span><span class="p">,</span> <span class="n">color</span><span class="p">:</span> <span class="n">chess</span><span class="o">.</span><span class="n">Color</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns list of squares around king&quot;&quot;&quot;</span>
+        <span class="n">king_square</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">pieces</span><span class="p">(</span><span class="n">chess</span><span class="o">.</span><span class="n">KING</span><span class="p">,</span> <span class="n">color</span><span class="p">)</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+        
+        <span class="n">king_file</span> <span class="o">=</span> <span class="n">chess</span><span class="o">.</span><span class="n">square_file</span><span class="p">(</span><span class="n">king_square</span><span class="p">)</span>
+        <span class="n">king_rank</span> <span class="o">=</span> <span class="n">chess</span><span class="o">.</span><span class="n">square_rank</span><span class="p">(</span><span class="n">king_square</span><span class="p">)</span> 
+        
+        <span class="n">surrounding_squares</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="k">for</span> <span class="n">rank_offset</span> <span class="ow">in</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]:</span>
+            <span class="k">for</span> <span class="n">file_offset</span> <span class="ow">in</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]:</span>
+                <span class="n">new_rank</span> <span class="o">=</span> <span class="n">king_rank</span> <span class="o">+</span> <span class="n">rank_offset</span>
+                <span class="n">new_file</span> <span class="o">=</span> <span class="n">king_file</span> <span class="o">+</span> <span class="n">file_offset</span>
+                
+                <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">new_rank</span> <span class="o">&lt;=</span> <span class="mi">7</span> <span class="ow">and</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">new_file</span> <span class="o">&lt;=</span> <span class="mi">7</span><span class="p">:</span>  <span class="c1"># pole jest na planszy</span>
+                    <span class="n">square</span> <span class="o">=</span> <span class="n">chess</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">new_file</span><span class="p">,</span> <span class="n">new_rank</span><span class="p">)</span>
+                    <span class="n">surrounding_squares</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">square</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">surrounding_squares</span></div>
+    
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">is_endgame</span><span class="p">(</span><span class="n">board</span><span class="p">:</span> <span class="n">chess</span><span class="o">.</span><span class="n">Board</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">chess</span><span class="o">.</span><span class="n">popcount</span><span class="p">(</span><span class="n">board</span><span class="o">.</span><span class="n">queens</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">SalmonChess</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">chess</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2024, igorjakus.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

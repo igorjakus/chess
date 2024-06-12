@@ -1,8 +1,9 @@
 class Config:
+    """ Config file - edit it to fine-tune your experience """
     # MOST IMPORTANT
     ENGINE = "negamax"  # ["stockfish", "mcts", "random", "negamax"]
     SECONDARY_ENGINE = "mcts"  # for engine vs engine mode
-    WINDOW_SIZE = 640
+    WINDOW_SIZE = 760
 
     # paths
     STOCKFISH_PATH = "stockfish/src/stockfish"

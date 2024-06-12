@@ -7,9 +7,11 @@ class Engine(ABC):
         self.board = board
 
     @abstractmethod
-    def play_move(self):
+    def play_move(self) -> None:
+        """Engine plays move and change board"""
         pass
 
     @abstractmethod
-    def quit(self):
+    def quit(self) -> None:
+        """Safely turns off the engine"""
         pass

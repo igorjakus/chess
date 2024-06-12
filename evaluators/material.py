@@ -19,8 +19,7 @@ class MaterialEvaluator(Evaluator):
     
     @staticmethod
     def material(board : chess.Board):
-        """Returns material balance in centipawns
-        I found it at chessprogramming.com"""
+        """Returns material balance in centipawns"""
         white = board.occupied_co[chess.WHITE]
         black = board.occupied_co[chess.BLACK]
         return (

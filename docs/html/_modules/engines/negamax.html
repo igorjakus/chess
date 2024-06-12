@@ -1,0 +1,190 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>engines.negamax &#8212; SalmonChess  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for engines.negamax</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">chess</span>
+<span class="kn">import</span> <span class="nn">chess.polyglot</span>
+<span class="kn">from</span> <span class="nn">engines.engine</span> <span class="kn">import</span> <span class="n">Engine</span>
+<span class="kn">from</span> <span class="nn">evaluators.advanced</span> <span class="kn">import</span> <span class="n">AdvancedEvaluator</span>
+<span class="kn">from</span> <span class="nn">config</span> <span class="kn">import</span> <span class="n">Config</span>
+
+
+<div class="viewcode-block" id="NegamaxEngine"><a class="viewcode-back" href="../../modules.html#engines.negamax.NegamaxEngine">[docs]</a><span class="k">class</span> <span class="nc">NegamaxEngine</span><span class="p">(</span><span class="n">Engine</span><span class="p">):</span>
+    <span class="n">OPENING_BOOK_PATH</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;assets/opening_books/</span><span class="si">{</span><span class="n">Config</span><span class="o">.</span><span class="n">NEGAMAX_OPENING_BOOK</span><span class="si">}</span><span class="s2">.bin&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">board</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">board</span> <span class="o">=</span> <span class="n">board</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">depth</span> <span class="o">=</span> <span class="n">Config</span><span class="o">.</span><span class="n">NEGAMAX_DEPTH</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">evaluator</span> <span class="o">=</span> <span class="n">AdvancedEvaluator</span><span class="p">()</span>
+
+<div class="viewcode-block" id="NegamaxEngine.play_move"><a class="viewcode-back" href="../../modules.html#engines.negamax.NegamaxEngine.play_move">[docs]</a>    <span class="k">def</span> <span class="nf">play_move</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Engine plays move and change board&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">board</span><span class="o">.</span><span class="n">is_game_over</span><span class="p">():</span>
+            <span class="k">return</span>
+    
+        <span class="c1"># play move from opening book</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">play_opening</span><span class="p">():</span>
+            <span class="k">return</span>
+
+        <span class="n">move</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">best_move</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">board</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">depth</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">board</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">move</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="NegamaxEngine.quit"><a class="viewcode-back" href="../../modules.html#engines.negamax.NegamaxEngine.quit">[docs]</a>    <span class="k">def</span> <span class="nf">quit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Safely turns off the engine&quot;&quot;&quot;</span>
+        <span class="k">pass</span>  <span class="c1"># no need to delete anything manually</span></div>
+
+<div class="viewcode-block" id="NegamaxEngine.play_opening"><a class="viewcode-back" href="../../modules.html#engines.negamax.NegamaxEngine.play_opening">[docs]</a>    <span class="k">def</span> <span class="nf">play_opening</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Try to play opening, if it&#39;s possible return True, otherwise False&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">chess</span><span class="o">.</span><span class="n">polyglot</span><span class="o">.</span><span class="n">open_reader</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">OPENING_BOOK_PATH</span><span class="p">)</span> <span class="k">as</span> <span class="n">reader</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">move</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">weighted_choice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">board</span><span class="p">)</span><span class="o">.</span><span class="n">move</span>
+            <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>  <span class="c1"># there is no answer in the book</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">board</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">move</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="NegamaxEngine.best_move"><a class="viewcode-back" href="../../modules.html#engines.negamax.NegamaxEngine.best_move">[docs]</a>    <span class="k">def</span> <span class="nf">best_move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">chess</span><span class="o">.</span><span class="n">Board</span><span class="p">,</span> <span class="n">depth</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns best move at given depth&quot;&quot;&quot;</span>
+        <span class="n">best_move</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">best_value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;-inf&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">move</span> <span class="ow">in</span> <span class="n">state</span><span class="o">.</span><span class="n">legal_moves</span><span class="p">:</span>
+            <span class="n">state</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">move</span><span class="p">)</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">negamax</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">depth</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;-inf&quot;</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">))</span>
+            <span class="n">state</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">value</span> <span class="o">&gt;</span> <span class="n">best_value</span><span class="p">:</span>
+                <span class="n">best_value</span> <span class="o">=</span> <span class="n">value</span>
+                <span class="n">best_move</span> <span class="o">=</span> <span class="n">move</span>
+        
+        <span class="k">return</span> <span class="n">best_move</span></div>
+    
+<div class="viewcode-block" id="NegamaxEngine.negamax"><a class="viewcode-back" href="../../modules.html#engines.negamax.NegamaxEngine.negamax">[docs]</a>    <span class="k">def</span> <span class="nf">negamax</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">chess</span><span class="o">.</span><span class="n">Board</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Use negamax algorithm to determine best-move evaluation&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">depth</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">state</span><span class="o">.</span><span class="n">is_game_over</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+
+        <span class="c1"># Sort moves only if depth is 6 or more</span>
+        <span class="n">moves</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ordered_moves</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">depth</span><span class="o">&gt;=</span><span class="mi">6</span><span class="p">)</span>
+        
+        <span class="n">max_score</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;-inf&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">move</span> <span class="ow">in</span> <span class="n">moves</span><span class="p">:</span>
+            <span class="n">state</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">move</span><span class="p">)</span>
+            <span class="n">score</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">negamax</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">depth</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="n">beta</span><span class="p">,</span> <span class="o">-</span><span class="n">alpha</span><span class="p">)</span>
+            <span class="n">state</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+
+            <span class="n">max_score</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">max_score</span><span class="p">,</span> <span class="n">score</span><span class="p">)</span>
+            <span class="n">alpha</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">score</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">alpha</span> <span class="o">&gt;=</span> <span class="n">beta</span><span class="p">:</span>
+                <span class="k">break</span>
+        <span class="k">return</span> <span class="n">max_score</span></div>
+
+<div class="viewcode-block" id="NegamaxEngine.ordered_moves"><a class="viewcode-back" href="../../modules.html#engines.negamax.NegamaxEngine.ordered_moves">[docs]</a>    <span class="k">def</span> <span class="nf">ordered_moves</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">board</span><span class="p">:</span> <span class="n">chess</span><span class="o">.</span><span class="n">Board</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sort moves by evaluation&quot;&quot;&quot;</span>
+        <span class="k">def</span> <span class="nf">eval_prio</span><span class="p">(</span><span class="n">move</span><span class="p">):</span>
+            <span class="n">board</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">move</span><span class="p">)</span>
+            <span class="n">prio</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">board</span><span class="p">)</span>
+            <span class="n">board</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">prio</span>
+        
+        <span class="n">moves</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">legal_moves</span>
+        <span class="k">return</span> <span class="n">moves</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">order</span> <span class="k">else</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">moves</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">eval_prio</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">SalmonChess</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">chess</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2024, igorjakus.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

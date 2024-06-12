@@ -23,11 +23,13 @@ class UserInterface:
         self.update_screen()
 
     def reset(self):
+        """Reset board and UI"""
         self.board.reset()
         self.selected_piece = None
         self.legal_moves = []
 
     def handle_events(self):
+        """Handle inputs"""
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.quit()
@@ -39,6 +41,7 @@ class UserInterface:
                 self.update_screen()
 
     def handle_init(self):
+        """Show mode selection"""
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -56,12 +59,14 @@ class UserInterface:
             pygame.display.flip()
     
     def handle_game_over(self):
+        """Show mode selection and last game result"""
         self.__draw_game_over()
         mode = self.handle_init()
         self.reset()
         return mode
 
     def quit(self):
+        """Safely quit app"""
         pygame.quit()
         raise SystemExit
 
@@ -79,6 +84,7 @@ class UserInterface:
             self.legal_moves = [move for move in self.board.legal_moves if move.from_square == square]
     
     def player_move(self):
+        """Wait for player to move"""
         if self.board.is_game_over():
             return
 
@@ -126,6 +132,7 @@ class UserInterface:
         return piece and piece.piece_type == chess.PAWN and chess.square_rank(move.to_square) in {0, 7}
 
     def update_screen(self):
+        """Update screen content"""
         self.__draw_board()
         self.__draw_effects()
         self.__draw_pieces()
@@ -213,4 +220,5 @@ class UserInterface:
         return x, y
 
     def flip(self):
+        """Flip board"""
         self.flipped_view = not self.flipped_view

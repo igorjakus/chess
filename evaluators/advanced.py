@@ -35,6 +35,7 @@ class AdvancedEvaluator(Evaluator):
         return value
 
     def gameover_evaluation(self, board : chess.Board):
+        """Evaluate when game is over"""
         winner = board.outcome().winner
         if winner is None:
             return 0  # draw
@@ -43,8 +44,7 @@ class AdvancedEvaluator(Evaluator):
 
     @staticmethod
     def material(board : chess.Board):
-        """Returns material balance in centipawns
-        I found it at chessprogramming.com"""
+        """Returns material balance in centipawns"""
         white = board.occupied_co[chess.WHITE]
         black = board.occupied_co[chess.BLACK]
         return (
@@ -89,6 +89,7 @@ class AdvancedEvaluator(Evaluator):
         return evaluation
 
     def pesto_tables(self, board: chess.Board) -> int:
+        """Use PeSTO as piece-table to estimate pieces strategic placement"""
         evaluation = 0
         endgame = self.is_endgame(board)
         
@@ -123,6 +124,7 @@ class AdvancedEvaluator(Evaluator):
 
     @staticmethod
     def tempo(board: chess.Board):
+        """Reward if white has tempo, punish if black has tempo"""
         return 1 if board.turn == chess.WHITE else -1
 
     @staticmethod
@@ -142,7 +144,7 @@ class AdvancedEvaluator(Evaluator):
         return white_moves - black_moves
       
     def aggressiveness(self, board: chess.Board):
-        """Sum of attackers for each square near king"""
+        """Returns sum of attackers for each square near king"""
         value = 0
 
         # ile białych figur atakuje czarnego króla i jego otoczenie

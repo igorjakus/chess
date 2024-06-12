@@ -10,6 +10,7 @@ class Evaluator(ABC):
     
     @abstractmethod
     def evaluate(self, board: chess.Board):
+        """Returns board evaluation in centipawns"""
         fen = board.fen()
         if fen in self.cache:
             return self.cache[fen]

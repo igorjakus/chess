@@ -1,0 +1,38 @@
+chess
+=====
+
+.. automodule:: engines.engine
+   :members:
+
+.. automodule:: engines.mcts
+   :members:
+
+.. automodule:: engines.negamax
+   :members:
+
+.. automodule:: engines.random
+   :members:
+
+.. automodule:: engines.stockfish
+   :members:
+
+.. automodule:: evaluators.advanced
+   :members:
+
+.. automodule:: evaluators.evaluator
+   :members:
+
+.. automodule:: evaluators.material
+   :members:
+
+.. automodule:: evaluators.pesto
+   :members:
+
+.. automodule:: evaluators.piece_tables
+   :members:
+
+.. automodule:: ui.interface
+   :members:
+
+.. automodule:: ui.resource_manager
+   :members:

@@ -2,6 +2,7 @@ import pygame
 
 
 class ResourceManager:
+    """Class for managing resources"""
     def __init__(self, SQUARE_SIZE):
         pygame.init()
         self.logo = self._load_logo()

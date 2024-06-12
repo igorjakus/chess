@@ -24,11 +24,13 @@ class Node:
             self.uct_value = (self.wins / self.visits) + exploration_weight * sqrt(log(self.parent.visits) / self.visits)
 
     def best_child(self, exploration_weight=1.4142):
+        """Returns child with greatest UCT value"""
         for child in self.children:
             child.update_uct_value(exploration_weight)
         return max(self.children, key=lambda child: child.uct_value)
 
     def add_child(self, child_state, move):
+        """Adds child to children list"""
         child_node = Node(child_state, parent=self, move=move)
         self.children.append(child_node)
         return child_node
@@ -42,6 +44,7 @@ class MCTSEngine(Engine):
         self.depth = Config.MCTS_DEPTH
 
     def play_move(self):
+        """Engine plays move and change board"""
         if self.board.is_game_over():
             return
 
@@ -50,6 +53,7 @@ class MCTSEngine(Engine):
         self.board.push(move)
 
     def mcts(self):
+        """Use MCTS algorithm to determine best-move"""
         for _ in range(self.iterations):
             node = self.node
 
@@ -104,4 +108,5 @@ class MCTSEngine(Engine):
             return 1  # White is winning
         
     def quit(self):
+        """Safely turns off the engine"""
         pass  # no need to delete anything manually

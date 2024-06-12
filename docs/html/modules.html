@@ -1,0 +1,316 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>chess &#8212; SalmonChess  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Welcome to SalmonChess’s documentation!" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-engines.engine">
+<span id="chess"></span><h1>chess<a class="headerlink" href="#module-engines.engine" title="Permalink to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="engines.engine.Engine">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">engines.engine.</span></span><span class="sig-name descname"><span class="pre">Engine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">board</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Board</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/engines/engine.html#Engine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#engines.engine.Engine" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="engines.engine.Engine.play_move">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">play_move</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/engines/engine.html#Engine.play_move"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#engines.engine.Engine.play_move" title="Permalink to this definition">¶</a></dt>
+<dd><p>Engine plays move and change board</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="engines.engine.Engine.quit">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">quit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/engines/engine.html#Engine.quit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#engines.engine.Engine.quit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Safely turns off the engine</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-engines.mcts"></span><dl class="py class">
+<dt class="sig sig-object py" id="engines.mcts.MCTSEngine">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">engines.mcts.</span></span><span class="sig-name descname"><span class="pre">MCTSEngine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">board</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Board</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/engines/mcts.html#MCTSEngine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#engines.mcts.MCTSEngine" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="engines.mcts.MCTSEngine.mcts">
+<span class="sig-name descname"><span class="pre">mcts</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/engines/mcts.html#MCTSEngine.mcts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#engines.mcts.MCTSEngine.mcts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use MCTS algorithm to determine best-move</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="engines.mcts.MCTSEngine.play_move">
+<span class="sig-name descname"><span class="pre">play_move</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/engines/mcts.html#MCTSEngine.play_move"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#engines.mcts.MCTSEngine.play_move" title="Permalink to this definition">¶</a></dt>
+<dd><p>Engine plays move and change board</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="engines.mcts.MCTSEngine.quit">
+<span class="sig-name descname"><span class="pre">quit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/engines/mcts.html#MCTSEngine.quit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#engines.mcts.MCTSEngine.quit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Safely turns off the engine</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="engines.mcts.MCTSEngine.simulate_game">
+<span class="sig-name descname"><span class="pre">simulate_game</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">board</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Board</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/engines/mcts.html#MCTSEngine.simulate_game"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#engines.mcts.MCTSEngine.simulate_game" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simulate game into some depth and then evaluate</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-engines.negamax"></span><dl class="py class">
+<dt class="sig sig-object py" id="engines.negamax.NegamaxEngine">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">engines.negamax.</span></span><span class="sig-name descname"><span class="pre">NegamaxEngine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">board</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/engines/negamax.html#NegamaxEngine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#engines.negamax.NegamaxEngine" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="engines.negamax.NegamaxEngine.best_move">
+<span class="sig-name descname"><span class="pre">best_move</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Board</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/engines/negamax.html#NegamaxEngine.best_move"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#engines.negamax.NegamaxEngine.best_move" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns best move at given depth</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="engines.negamax.NegamaxEngine.negamax">
+<span class="sig-name descname"><span class="pre">negamax</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Board</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/engines/negamax.html#NegamaxEngine.negamax"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#engines.negamax.NegamaxEngine.negamax" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use negamax algorithm to determine best-move evaluation</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="engines.negamax.NegamaxEngine.ordered_moves">
+<span class="sig-name descname"><span class="pre">ordered_moves</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">board</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Board</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/engines/negamax.html#NegamaxEngine.ordered_moves"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#engines.negamax.NegamaxEngine.ordered_moves" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sort moves by evaluation</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="engines.negamax.NegamaxEngine.play_move">
+<span class="sig-name descname"><span class="pre">play_move</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/engines/negamax.html#NegamaxEngine.play_move"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#engines.negamax.NegamaxEngine.play_move" title="Permalink to this definition">¶</a></dt>
+<dd><p>Engine plays move and change board</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="engines.negamax.NegamaxEngine.play_opening">
+<span class="sig-name descname"><span class="pre">play_opening</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/engines/negamax.html#NegamaxEngine.play_opening"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#engines.negamax.NegamaxEngine.play_opening" title="Permalink to this definition">¶</a></dt>
+<dd><p>Try to play opening, if it’s possible return True, otherwise False</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="engines.negamax.NegamaxEngine.quit">
+<span class="sig-name descname"><span class="pre">quit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/engines/negamax.html#NegamaxEngine.quit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#engines.negamax.NegamaxEngine.quit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Safely turns off the engine</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-engines.random"></span><dl class="py class">
+<dt class="sig sig-object py" id="engines.random.RandomEngine">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">engines.random.</span></span><span class="sig-name descname"><span class="pre">RandomEngine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">board</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Board</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/engines/random.html#RandomEngine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#engines.random.RandomEngine" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="engines.random.RandomEngine.play_move">
+<span class="sig-name descname"><span class="pre">play_move</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/engines/random.html#RandomEngine.play_move"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#engines.random.RandomEngine.play_move" title="Permalink to this definition">¶</a></dt>
+<dd><p>Engine plays move and change board</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="engines.random.RandomEngine.quit">
+<span class="sig-name descname"><span class="pre">quit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/engines/random.html#RandomEngine.quit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#engines.random.RandomEngine.quit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Safely turns off the engine</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-engines.stockfish"></span><dl class="py class">
+<dt class="sig sig-object py" id="engines.stockfish.StockfishEngine">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">engines.stockfish.</span></span><span class="sig-name descname"><span class="pre">StockfishEngine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">board</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Board</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/engines/stockfish.html#StockfishEngine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#engines.stockfish.StockfishEngine" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="engines.stockfish.StockfishEngine.play_move">
+<span class="sig-name descname"><span class="pre">play_move</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/engines/stockfish.html#StockfishEngine.play_move"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#engines.stockfish.StockfishEngine.play_move" title="Permalink to this definition">¶</a></dt>
+<dd><p>Engine plays move and change board</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="engines.stockfish.StockfishEngine.quit">
+<span class="sig-name descname"><span class="pre">quit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/engines/stockfish.html#StockfishEngine.quit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#engines.stockfish.StockfishEngine.quit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Safely turns off the engine</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-evaluators.advanced"></span><dl class="py class">
+<dt class="sig sig-object py" id="evaluators.advanced.AdvancedEvaluator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">evaluators.advanced.</span></span><span class="sig-name descname"><span class="pre">AdvancedEvaluator</span></span><a class="reference internal" href="_modules/evaluators/advanced.html#AdvancedEvaluator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#evaluators.advanced.AdvancedEvaluator" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="evaluators.advanced.AdvancedEvaluator.aggressiveness">
+<span class="sig-name descname"><span class="pre">aggressiveness</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">board</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Board</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/evaluators/advanced.html#AdvancedEvaluator.aggressiveness"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#evaluators.advanced.AdvancedEvaluator.aggressiveness" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns sum of attackers for each square near king</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="evaluators.advanced.AdvancedEvaluator.attacking_squares">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">attacking_squares</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">board</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Board</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/evaluators/advanced.html#AdvancedEvaluator.attacking_squares"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#evaluators.advanced.AdvancedEvaluator.attacking_squares" title="Permalink to this definition">¶</a></dt>
+<dd><p>Count how many squares each side attacks</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="evaluators.advanced.AdvancedEvaluator.evaluate">
+<span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">board</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Board</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/evaluators/advanced.html#AdvancedEvaluator.evaluate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#evaluators.advanced.AdvancedEvaluator.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns evaluation for given board in centipawns</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="evaluators.advanced.AdvancedEvaluator.gameover_evaluation">
+<span class="sig-name descname"><span class="pre">gameover_evaluation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">board</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Board</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/evaluators/advanced.html#AdvancedEvaluator.gameover_evaluation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#evaluators.advanced.AdvancedEvaluator.gameover_evaluation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate when game is over</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="evaluators.advanced.AdvancedEvaluator.get_king_surroundings">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_king_surroundings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">board</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Board</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/evaluators/advanced.html#AdvancedEvaluator.get_king_surroundings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#evaluators.advanced.AdvancedEvaluator.get_king_surroundings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns list of squares around king</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="evaluators.advanced.AdvancedEvaluator.material">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">material</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">board</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Board</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/evaluators/advanced.html#AdvancedEvaluator.material"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#evaluators.advanced.AdvancedEvaluator.material" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns material balance in centipawns</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="evaluators.advanced.AdvancedEvaluator.pesto_tables">
+<span class="sig-name descname"><span class="pre">pesto_tables</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">board</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Board</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="_modules/evaluators/advanced.html#AdvancedEvaluator.pesto_tables"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#evaluators.advanced.AdvancedEvaluator.pesto_tables" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use PeSTO as piece-table to estimate pieces strategic placement</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="evaluators.advanced.AdvancedEvaluator.tempo">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">tempo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">board</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Board</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/evaluators/advanced.html#AdvancedEvaluator.tempo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#evaluators.advanced.AdvancedEvaluator.tempo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reward if white has tempo, punish if black has tempo</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-evaluators.evaluator"></span><dl class="py class">
+<dt class="sig sig-object py" id="evaluators.evaluator.Evaluator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">evaluators.evaluator.</span></span><span class="sig-name descname"><span class="pre">Evaluator</span></span><a class="reference internal" href="_modules/evaluators/evaluator.html#Evaluator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#evaluators.evaluator.Evaluator" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="evaluators.evaluator.Evaluator.evaluate">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">board</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Board</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/evaluators/evaluator.html#Evaluator.evaluate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#evaluators.evaluator.Evaluator.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns board evaluation in centipawns</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-evaluators.material"></span><dl class="py class">
+<dt class="sig sig-object py" id="evaluators.material.MaterialEvaluator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">evaluators.material.</span></span><span class="sig-name descname"><span class="pre">MaterialEvaluator</span></span><a class="reference internal" href="_modules/evaluators/material.html#MaterialEvaluator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#evaluators.material.MaterialEvaluator" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="evaluators.material.MaterialEvaluator.evaluate">
+<span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">board</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Board</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/evaluators/material.html#MaterialEvaluator.evaluate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#evaluators.material.MaterialEvaluator.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Material-balance based evaluation</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="evaluators.material.MaterialEvaluator.material">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">material</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">board</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Board</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/evaluators/material.html#MaterialEvaluator.material"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#evaluators.material.MaterialEvaluator.material" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns material balance in centipawns</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-evaluators.pesto"></span><span class="target" id="module-evaluators.piece_tables"></span><span class="target" id="module-ui.interface"></span><span class="target" id="module-ui.resource_manager"></span><dl class="py class">
+<dt class="sig sig-object py" id="ui.resource_manager.ResourceManager">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ui.resource_manager.</span></span><span class="sig-name descname"><span class="pre">ResourceManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SQUARE_SIZE</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ui/resource_manager.html#ResourceManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ui.resource_manager.ResourceManager" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for managing resources</p>
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">SalmonChess</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">chess</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Welcome to SalmonChess’s documentation!</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2024, igorjakus.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/modules.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

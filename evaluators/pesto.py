@@ -1,5 +1,3 @@
-"""PeSTO, a bit more advanced piece-table"""
-
 MG_PAWN = [
       0,   0,   0,   0,   0,   0,  0,   0,
      98, 134,  61,  95,  68, 126, 34, -11,
