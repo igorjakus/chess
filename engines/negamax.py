@@ -17,7 +17,7 @@ class NegamaxEngine(Engine):
         """Engine plays move and change board"""
         if self.board.is_game_over():
             return
-    
+
         # play move from opening book
         if self.play_opening():
             return
@@ -53,17 +53,17 @@ class NegamaxEngine(Engine):
             if value > best_value:
                 best_value = value
                 best_move = move
-        
+
         return best_move
-    
+
     def negamax(self, state: chess.Board, depth, alpha, beta):
         """Use negamax algorithm to determine best-move evaluation"""
         if depth <= 0 or state.is_game_over():
             return self.evaluator.evaluate(state)
 
         # Sort moves only if depth is 6 or more
-        moves = self.ordered_moves(state, order=depth>=6)
-        
+        moves = self.ordered_moves(state, order=depth >= 6)
+
         max_score = float("-inf")
         for move in moves:
             state.push(move)
@@ -78,11 +78,12 @@ class NegamaxEngine(Engine):
 
     def ordered_moves(self, board: chess.Board, order=False):
         """Sort moves by evaluation"""
+
         def eval_prio(move):
             board.push(move)
             prio = self.evaluator.evaluate(board)
             board.pop()
             return prio
-        
+
         moves = board.legal_moves
         return moves if not order else sorted(moves, key=eval_prio, reverse=True)

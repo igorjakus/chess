@@ -1,5 +1,6 @@
 class Config:
-    """ Config file - edit it to fine-tune your experience """
+    """Config file - edit it to fine-tune your experience"""
+
     # MOST IMPORTANT
     ENGINE = "negamax"  # ["stockfish", "mcts", "random", "negamax"]
     SECONDARY_ENGINE = "mcts"  # for engine vs engine mode
@@ -13,7 +14,7 @@ class Config:
     MCTS_ITERATIONS = 100
     MCTS_DEPTH = 10
     NEGAMAX_DEPTH = 2
-    NEGAMAX_OPENING_BOOK = "baron30" # ["baron30", "human", "titans"]
+    NEGAMAX_OPENING_BOOK = "baron30"  # ["baron30", "human", "titans"]
 
     # sizes
     SQUARE_SIZE = WINDOW_SIZE // 8

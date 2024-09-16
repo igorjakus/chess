@@ -22,7 +22,9 @@ class Node:
 
     def update_uct_value(self, exploration_weight=1.4142):
         if self.visits > 0:
-            self.uct_value = (self.wins / self.visits) + exploration_weight * sqrt(log(self.parent.visits) / self.visits)
+            self.uct_value = (self.wins / self.visits) + exploration_weight * sqrt(
+                log(self.parent.visits) / self.visits
+            )
 
     def best_child(self, exploration_weight=1.4142):
         """Returns child with greatest UCT value"""
@@ -64,7 +66,13 @@ class MCTSEngine(Engine):
 
             # Expansion
             if not node.is_fully_expanded() and not node.board.is_game_over():
-                move = random.choice([m for m in node.board.legal_moves if not any(child.move == m for child in node.children)])
+                move = random.choice(
+                    [
+                        m
+                        for m in node.board.legal_moves
+                        if not any(child.move == m for child in node.children)
+                    ]
+                )
                 new_board = node.board.copy()
                 new_board.push(move)
                 node = node.add_child(new_board, move)
@@ -89,9 +97,9 @@ class MCTSEngine(Engine):
         for _ in range(self.depth):
             if board.is_game_over():
                 result = board.result()
-                if result == '1-0':
+                if result == "1-0":
                     return 1  # White wins
-                elif result == '0-1':
+                elif result == "0-1":
                     return 0  # Black wins
                 else:
                     return 0.5  # Draw
@@ -107,7 +115,7 @@ class MCTSEngine(Engine):
             return 0  # Black is winning
         else:
             return 1  # White is winning
-        
+
     def quit(self):
         """Safely turns off the engine"""
         pass  # no need to delete anything manually

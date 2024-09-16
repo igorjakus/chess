@@ -10,7 +10,8 @@ from engines.stockfish import StockfishEngine
 
 
 class App:
-    """ Main class of the App"""
+    """Main class of the App"""
+
     def __init__(self):
         self.board = chess.Board()
         self.ui = interface.UserInterface(self.board)
@@ -56,7 +57,7 @@ class App:
 
     def player_vs_ai(self):
         """One turn in PvE"""
-        if self.player_starts: 
+        if self.player_starts:
             self.ui.player_move()
             self.ui.update_screen()
 
@@ -92,23 +93,23 @@ class App:
         mode_actions = {
             1: self.player_vs_player,
             2: self.player_vs_ai,
-            3: self.ai_vs_ai
+            3: self.ai_vs_ai,
         }
 
         try:
             mode = self.ui.handle_init()
-            
+
             while True:
                 while not self.board.is_game_over():
                     mode_actions[mode]()
-                
+
                 mode = self.ui.handle_game_over()
                 if mode == 2:
                     self.switch_player()
-    
+
         except SystemExit:
             self.quit()
-        
+
 
 if __name__ == "__main__":
     app = App()

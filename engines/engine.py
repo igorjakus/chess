@@ -4,7 +4,7 @@ import chess
 
 
 class Engine(ABC):
-    def __init__(self, board : chess.Board):
+    def __init__(self, board: chess.Board):
         self.board = board
 
     @abstractmethod
