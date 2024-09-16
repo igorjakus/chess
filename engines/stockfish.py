@@ -1,7 +1,7 @@
 import chess
 import chess.engine
-from engines.engine import Engine
 from config import Config
+from engines.engine import Engine
 
 
 class StockfishEngine(Engine):

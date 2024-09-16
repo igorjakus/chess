@@ -1,7 +1,7 @@
-from evaluators.material import Evaluator
-from config import Config
 import chess
 import chess.engine
+from config import Config
+from evaluators.material import Evaluator
 
 
 class StockfishEvaluator(Evaluator):

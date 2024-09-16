@@ -1,9 +1,11 @@
 import chess
 from evaluators.evaluator import Evaluator
-from evaluators.piece_tables import PAWN_TABLE, KNIGHT_TABLE, BISHOP_TABLE, ROOK_TABLE
-from evaluators.piece_tables import QUEEN_TABLE, KING_MIDGAME_TABLE, KING_ENDGAME_TABLE
-from evaluators.pesto import MG_PAWN, MG_KNIGHT, MG_BISHOP, MG_KING, MG_QUEEN, MG_ROOK
-from evaluators.pesto import EG_PAWN, EG_KNIGHT, EG_BISHOP, EG_KING, EG_QUEEN, EG_ROOK
+from evaluators.pesto import (EG_BISHOP, EG_KING, EG_KNIGHT, EG_PAWN, EG_QUEEN,
+                              EG_ROOK, MG_BISHOP, MG_KING, MG_KNIGHT, MG_PAWN,
+                              MG_QUEEN, MG_ROOK)
+from evaluators.piece_tables import (BISHOP_TABLE, KING_ENDGAME_TABLE,
+                                     KING_MIDGAME_TABLE, KNIGHT_TABLE,
+                                     PAWN_TABLE, QUEEN_TABLE, ROOK_TABLE)
 
 
 class AdvancedEvaluator(Evaluator):

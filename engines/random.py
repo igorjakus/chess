@@ -1,5 +1,6 @@
-from engines.engine import Engine
 from random import choice
+
+from engines.engine import Engine
 
 
 class RandomEngine(Engine):

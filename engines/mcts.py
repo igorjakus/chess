@@ -1,9 +1,10 @@
-from evaluators.material import MaterialEvaluator
-from engines.engine import Engine
-from config import Config
-from math import sqrt, log
 import random
+from math import log, sqrt
+
 import chess
+from config import Config
+from engines.engine import Engine
+from evaluators.material import MaterialEvaluator
 
 
 class Node:

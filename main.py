@@ -1,11 +1,12 @@
 import sys
+
 import chess
 import ui.interface as interface
-from engines.random import RandomEngine
-from engines.mcts import MCTSEngine
-from engines.stockfish import StockfishEngine
-from engines.negamax import NegamaxEngine
 from config import Config
+from engines.mcts import MCTSEngine
+from engines.negamax import NegamaxEngine
+from engines.random import RandomEngine
+from engines.stockfish import StockfishEngine
 
 
 class App:

@@ -1,8 +1,8 @@
 import chess
 import chess.polyglot
+from config import Config
 from engines.engine import Engine
 from evaluators.advanced import AdvancedEvaluator
-from config import Config
 
 
 class NegamaxEngine(Engine):

@@ -1,4 +1,5 @@
 import pygame
+
 import chess
 from config import Config
 from ui.resource_manager import ResourceManager

@@ -1,5 +1,5 @@
-from evaluators.evaluator import Evaluator
 import chess
+from evaluators.evaluator import Evaluator
 
 
 class MaterialEvaluator(Evaluator):
